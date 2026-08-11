@@ -1,4 +1,4 @@
-# JeevanSetu AI — API Contract
+# JeevanSetu  — API Contract
 
 ## 1. Purpose
 

@@ -1,0 +1,168 @@
+{
+  "project": "JeevanSetu AI",
+  "data_type": "outbreak_alerts",
+  "purpose": "Prototype/demo dataset for testing outbreak-alert retrieval and chatbot responses.",
+  "important_notice": "The records below are DEMONSTRATION DATA and must not be presented to users as real current outbreaks. A production system should consume and verify official surveillance data before issuing an alert.",
+  "official_surveillance_sources": [
+    {
+      "name": "Integrated Disease Surveillance Programme (IDSP), NCDC, Ministry of Health and Family Welfare, Government of India",
+      "role": "National disease surveillance and outbreak monitoring",
+      "url": "https://ncdc.mohfw.gov.in/includes/About/CentresAndDivision/IDSP.php"
+    },
+    {
+      "name": "Integrated Health Information Platform (IHIP) — IDSP",
+      "role": "Government health information and disease-surveillance platform",
+      "url": "https://www.ihip.mohfw.gov.in/idsp/"
+    },
+    {
+      "name": "IHIP Community Based Surveillance",
+      "role": "Community reporting of outbreak-prone diseases and related events",
+      "url": "https://ihip.mohfw.gov.in/cbs/"
+    }
+  ],
+  "alert_levels": {
+    "NORMAL": "No alert is being demonstrated.",
+    "ELEVATED": "Increased activity requiring additional awareness and preventive measures.",
+    "HIGH": "High-priority alert requiring users to follow official public-health guidance and seek care when appropriate."
+  },
+  "alerts": [
+    {
+      "id": "DEMO-DENGUE-THANE-001",
+      "status": "DEMO",
+      "disease": "Dengue",
+      "location": {
+        "state": "Maharashtra",
+        "district": "Thane"
+      },
+      "alert_level": "ELEVATED",
+      "message": "Demo alert: increased dengue activity detected in the area.",
+      "precautions": [
+        "Avoid mosquito bites.",
+        "Use mosquito repellent and protective clothing.",
+        "Remove stagnant water where mosquitoes can breed."
+      ],
+      "chatbot_response_hint": "Tell the user that this is an elevated demo alert and provide general dengue-prevention advice. Do not claim that a real outbreak is occurring.",
+      "source_type": "Prototype demonstration data",
+      "last_updated": "2026-08-11"
+    },
+    {
+      "id": "DEMO-MALARIA-NAGPUR-002",
+      "status": "DEMO",
+      "disease": "Malaria",
+      "location": {
+        "state": "Maharashtra",
+        "district": "Nagpur"
+      },
+      "alert_level": "ELEVATED",
+      "message": "Demo alert: increased malaria activity detected in the area.",
+      "precautions": [
+        "Reduce exposure to mosquito bites.",
+        "Use mosquito nets and repellents where appropriate.",
+        "Seek medical evaluation promptly if malaria is suspected."
+      ],
+      "chatbot_response_hint": "Provide malaria-prevention information and advise medical evaluation for suspected malaria. Do not diagnose the user.",
+      "source_type": "Prototype demonstration data",
+      "last_updated": "2026-08-11"
+    },
+    {
+      "id": "DEMO-CHIKUNGUNYA-MUMBAI-003",
+      "status": "DEMO",
+      "disease": "Chikungunya",
+      "location": {
+        "state": "Maharashtra",
+        "district": "Mumbai"
+      },
+      "alert_level": "ELEVATED",
+      "message": "Demo alert: increased chikungunya activity detected in the area.",
+      "precautions": [
+        "Avoid mosquito bites.",
+        "Use mosquito repellent.",
+        "Remove stagnant water around homes."
+      ],
+      "chatbot_response_hint": "Provide mosquito-bite prevention guidance and advise medical care for severe or persistent symptoms.",
+      "source_type": "Prototype demonstration data",
+      "last_updated": "2026-08-11"
+    },
+    {
+      "id": "DEMO-MEASLES-PUNE-004",
+      "status": "DEMO",
+      "disease": "Measles",
+      "location": {
+        "state": "Maharashtra",
+        "district": "Pune"
+      },
+      "alert_level": "HIGH",
+      "message": "Demo alert: measles activity requiring heightened awareness.",
+      "precautions": [
+        "Follow the recommended measles vaccination schedule.",
+        "Avoid close contact with people suspected to have measles.",
+        "Seek medical advice if fever and a widespread rash occur."
+      ],
+      "chatbot_response_hint": "Emphasize vaccination and medical evaluation for suspected measles. Do not confirm infection from symptoms alone.",
+      "source_type": "Prototype demonstration data",
+      "last_updated": "2026-08-11"
+    },
+    {
+      "id": "DEMO-CHOLERA-KOLHAPUR-005",
+      "status": "DEMO",
+      "disease": "Cholera",
+      "location": {
+        "state": "Maharashtra",
+        "district": "Kolhapur"
+      },
+      "alert_level": "HIGH",
+      "message": "Demo alert: heightened cholera-awareness scenario.",
+      "precautions": [
+        "Drink safe water.",
+        "Wash hands regularly with soap and water.",
+        "Follow safe food and sanitation practices.",
+        "Seek urgent medical care for severe diarrhoea or signs of dehydration."
+      ],
+      "chatbot_response_hint": "Prioritize dehydration warnings and urgent medical evaluation when severe diarrhoea is reported.",
+      "source_type": "Prototype demonstration data",
+      "last_updated": "2026-08-11"
+    }
+  ],
+  "production_data_flow": {
+    "step_1": "Retrieve outbreak/event information from an authorised government surveillance source such as IDSP/IHIP.",
+    "step_2": "Verify the disease, location, date, alert status, and source.",
+    "step_3": "Store only verified records in the production database.",
+    "step_4": "Match the alert against the user's requested location.",
+    "step_5": "Return the alert together with prevention guidance and the official source.",
+    "step_6": "Never generate or infer an outbreak solely from an LLM."
+  },
+  "safety_rules": [
+    "Never present DEMO records as real outbreaks.",
+    "Do not create an outbreak alert from unverified social-media or user claims.",
+    "Always display the source and last-updated date for real alerts.",
+    "If no verified alert exists for a location, say that no verified alert was found rather than saying there is no outbreak.",
+    "The chatbot must not diagnose disease based on an outbreak alert or symptoms."
+  ],
+  "data_status": "DEMO",
+  "last_verified": "2026-08-11",
+  "critical_safety_notes": [
+    "All records in this prototype are DEMONSTRATION DATA and must not be presented as real current outbreaks.",
+    "Never infer an outbreak from symptoms, social-media claims, or user reports alone.",
+    "Real alerts must have a verified official source and update date.",
+    "If no verified alert is found, say that no verified alert was found; do not claim that no outbreak exists.",
+    "An outbreak alert is not a diagnosis."
+  ],
+  "response_restrictions": [
+    "Only use records marked VERIFIED for real-world alerts.",
+    "If data_status is DEMO, explicitly tell the user it is demonstration data.",
+    "Do not fabricate case counts, alert levels, dates, or locations.",
+    "Do not convert a disease-information record into an outbreak alert.",
+    "For real alerts, include the source and last-updated date.",
+    "For emergency symptoms, prioritize medical-care guidance over outbreak information."
+  ],
+  "official_sources": [
+    {
+      "name": "Integrated Disease Surveillance Programme (IDSP), NCDC",
+      "url": "https://ncdc.mohfw.gov.in/includes/About/CentresAndDivision/IDSP.php"
+    },
+    {
+      "name": "Integrated Health Information Platform (IHIP)",
+      "url": "https://ihip.mohfw.gov.in/"
+    }
+  ]
+}

@@ -1,0 +1,246 @@
+{
+  "title": "National Immunization Schedule (NIS) — India",
+  "country": "India",
+  "program": "Universal Immunization Programme (UIP)",
+  "purpose": "Reference dataset for JeevanSetu AI. Use for general vaccination education only; vaccination decisions should be confirmed with an authorised healthcare professional or government health facility.",
+  "last_verified": "2026-08-11",
+  "primary_source": {
+    "name": "Ministry of Health & Family Welfare, Government of India — National Immunization Schedule",
+    "url": "https://www.mohfw.gov.in/sites/default/files/National%20Immunization%20Schedule.pdf"
+  },
+  "official_nhm_source": {
+    "name": "National Health Mission — National Immunization Schedule",
+    "url": "https://nhm.gov.in/images/pdf/programmes/immunization/manual-formats/Current_UIP_Schedule.pdf"
+  },
+  "notes": [
+    "Japanese Encephalitis (JE) vaccination is applicable in selected endemic areas/districts as specified by the programme.",
+    "Some vaccine schedules may have programme-specific eligibility or regional applicability.",
+    "The chatbot should not tell a user to skip, repeat, or change a vaccine dose based only on chatbot advice.",
+    "For a missed dose, the chatbot should recommend contacting the nearest government health facility or vaccination provider rather than inventing a catch-up schedule."
+  ],
+  "pregnant_women": [
+    {
+      "vaccine": "Td-1",
+      "timing": "Early in pregnancy",
+      "dose": "0.5 ml",
+      "route": "Intramuscular",
+      "purpose": "Protection against tetanus and diphtheria"
+    },
+    {
+      "vaccine": "Td-2",
+      "timing": "4 weeks after Td-1",
+      "dose": "0.5 ml",
+      "route": "Intramuscular",
+      "purpose": "Protection against tetanus and diphtheria"
+    },
+    {
+      "vaccine": "Td booster",
+      "timing": "If 2 Td doses were received in a pregnancy within the previous 3 years",
+      "dose": "0.5 ml",
+      "route": "Intramuscular",
+      "purpose": "Booster protection against tetanus and diphtheria"
+    }
+  ],
+  "infants_and_children": [
+    {
+      "age": "At birth",
+      "vaccines": [
+        {
+          "name": "BCG",
+          "dose": "Birth dose",
+          "purpose": "Protection against childhood tuberculosis"
+        },
+        {
+          "name": "Hepatitis B",
+          "dose": "Birth dose, as early as possible within 24 hours",
+          "purpose": "Protection against hepatitis B"
+        },
+        {
+          "name": "OPV-0",
+          "dose": "Birth dose, as early as possible within the first 15 days",
+          "purpose": "Protection against polio"
+        }
+      ]
+    },
+    {
+      "age": "6 weeks",
+      "vaccines": [
+        {
+          "name": "bOPV-1",
+          "dose": "Dose 1",
+          "purpose": "Protection against polio"
+        },
+        {
+          "name": "Pentavalent-1",
+          "dose": "Dose 1",
+          "purpose": "Protection against diphtheria, pertussis, tetanus, hepatitis B and Hib disease"
+        },
+        {
+          "name": "fIPV-1",
+          "dose": "Fractional dose 1",
+          "purpose": "Protection against polio"
+        },
+        {
+          "name": "Rotavirus vaccine-1",
+          "dose": "Dose 1",
+          "purpose": "Protection against rotavirus diarrhoea"
+        },
+        {
+          "name": "PCV-1",
+          "dose": "Primary dose 1",
+          "purpose": "Protection against pneumococcal disease"
+        }
+      ]
+    },
+    {
+      "age": "10 weeks",
+      "vaccines": [
+        {
+          "name": "bOPV-2",
+          "dose": "Dose 2",
+          "purpose": "Protection against polio"
+        },
+        {
+          "name": "Pentavalent-2",
+          "dose": "Dose 2",
+          "purpose": "Protection against diphtheria, pertussis, tetanus, hepatitis B and Hib disease"
+        },
+        {
+          "name": "Rotavirus vaccine-2",
+          "dose": "Dose 2",
+          "purpose": "Protection against rotavirus diarrhoea"
+        }
+      ]
+    },
+    {
+      "age": "14 weeks",
+      "vaccines": [
+        {
+          "name": "bOPV-3",
+          "dose": "Dose 3",
+          "purpose": "Protection against polio"
+        },
+        {
+          "name": "Pentavalent-3",
+          "dose": "Dose 3",
+          "purpose": "Protection against diphtheria, pertussis, tetanus, hepatitis B and Hib disease"
+        },
+        {
+          "name": "fIPV-2",
+          "dose": "Fractional dose 2",
+          "purpose": "Protection against polio"
+        },
+        {
+          "name": "Rotavirus vaccine-3",
+          "dose": "Dose 3",
+          "purpose": "Protection against rotavirus diarrhoea"
+        },
+        {
+          "name": "PCV-2",
+          "dose": "Primary dose 2",
+          "purpose": "Protection against pneumococcal disease"
+        }
+      ]
+    },
+    {
+      "age": "9 completed months to 12 months",
+      "vaccines": [
+        {
+          "name": "MR-1",
+          "dose": "Dose 1",
+          "purpose": "Protection against measles and rubella"
+        },
+        {
+          "name": "JE-1",
+          "dose": "Dose 1 where applicable",
+          "purpose": "Protection against Japanese encephalitis"
+        },
+        {
+          "name": "PCV booster",
+          "dose": "Booster",
+          "purpose": "Protection against pneumococcal disease"
+        },
+        {
+          "name": "fIPV-3",
+          "dose": "Fractional dose 3",
+          "purpose": "Protection against polio"
+        }
+      ]
+    },
+    {
+      "age": "16 to 24 months",
+      "vaccines": [
+        {
+          "name": "MR-2",
+          "dose": "Dose 2",
+          "purpose": "Protection against measles and rubella"
+        },
+        {
+          "name": "JE-2",
+          "dose": "Dose 2 where applicable",
+          "purpose": "Protection against Japanese encephalitis"
+        },
+        {
+          "name": "DPT booster-1",
+          "dose": "Booster 1",
+          "purpose": "Protection against diphtheria, pertussis and tetanus"
+        },
+        {
+          "name": "bOPV booster",
+          "dose": "Booster",
+          "purpose": "Protection against polio"
+        }
+      ]
+    },
+    {
+      "age": "18 months to 5 years",
+      "vaccines": []
+    },
+    {
+      "age": "5 to 6 years",
+      "vaccines": [
+        {
+          "name": "DPT booster-2",
+          "dose": "Booster 2",
+          "purpose": "Protection against diphtheria, pertussis and tetanus"
+        }
+      ]
+    },
+    {
+      "age": "10 years",
+      "vaccines": [
+        {
+          "name": "Td",
+          "dose": "Dose",
+          "purpose": "Protection against tetanus and diphtheria"
+        }
+      ]
+    },
+    {
+      "age": "16 years",
+      "vaccines": [
+        {
+          "name": "Td",
+          "dose": "Dose",
+          "purpose": "Protection against tetanus and diphtheria"
+        }
+      ]
+    }
+  ],
+  "critical_notes": [
+    "This schedule is for general health education and RAG retrieval, not individualized medical advice.",
+    "Japanese Encephalitis vaccination applies in selected endemic areas/districts according to the government programme.",
+    "For missed or delayed doses, direct the user to an authorised vaccination provider rather than inventing a catch-up schedule.",
+    "The chatbot must not tell a user to skip, repeat, delay, or change a vaccine dose based only on AI output."
+  ],
+  "response_restrictions": [
+    "Do not create a personalized catch-up schedule.",
+    "Do not advise skipping, repeating, delaying, or changing a vaccine dose.",
+    "For missed doses or adverse reactions, recommend contacting an authorised vaccination provider.",
+    "For JE, confirm programme/location applicability before presenting it as routinely applicable."
+  ],
+  "source": {
+    "name": "Ministry of Health & Family Welfare, Government of India — National Immunization Schedule",
+    "url": "https://www.mohfw.gov.in/sites/default/files/National%20Immunization%20Schedule.pdf"
+  }
+}

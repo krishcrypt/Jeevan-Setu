@@ -1,0 +1,135 @@
+{
+  "project": "JeevanSetu AI",
+  "dataset": "Healthcare Sources and References",
+  "last_verified": "2026-08-11",
+  "sources": [
+    {
+      "id": "WHO_DISEASES",
+      "organization": "World Health Organization",
+      "type": "Disease Information",
+      "used_for": [
+        "Disease descriptions",
+        "Common symptoms",
+        "Warning signs",
+        "Prevention",
+        "Higher-risk groups"
+      ],
+      "url": "https://www.who.int/",
+      "last_verified": "2026-08-11"
+    },
+    {
+      "id": "NCDC_IDSP",
+      "organization": "National Centre for Disease Control",
+      "ministry": "Ministry of Health and Family Welfare, Government of India",
+      "type": "Disease Surveillance and Outbreak Data",
+      "used_for": [
+        "Outbreak surveillance",
+        "Disease alerts",
+        "Epidemic-prone disease monitoring",
+        "Outbreak investigation",
+        "Disease trend monitoring"
+      ],
+      "url": "https://ncdc.mohfw.gov.in/includes/About/CentresAndDivision/IDSP.php",
+      "last_verified": "2026-08-11",
+      "notes": "IDSP collects data on epidemic-prone diseases and supports early detection and response to outbreaks through surveillance and Rapid Response Teams."
+    },
+    {
+      "id": "IHIP_IDSP",
+      "organization": "Ministry of Health and Family Welfare",
+      "government": "Government of India",
+      "type": "Integrated Health Information Platform",
+      "used_for": [
+        "Disease surveillance",
+        "Outbreak reporting",
+        "Health data integration",
+        "Surveillance data management"
+      ],
+      "url": "https://www.ihip.gov.in/",
+      "last_verified": "2026-08-11"
+    },
+    {
+      "id": "MOHFW_NIS",
+      "organization": "Ministry of Health and Family Welfare",
+      "government": "Government of India",
+      "type": "National Immunization Schedule",
+      "used_for": [
+        "Childhood vaccination schedule",
+        "Pregnancy vaccination schedule",
+        "Vaccine timing",
+        "Dose information",
+        "Age-wise vaccination information"
+      ],
+      "url": "https://www.mohfw.gov.in/sites/default/files/National%20Immunization%20Schedule.pdf",
+      "last_verified": "2026-08-11"
+    },
+    {
+      "id": "MOHFW_VITAMIN_A",
+      "organization": "Ministry of Health and Family Welfare",
+      "government": "Government of India",
+      "type": "Vitamin A Supplementation",
+      "used_for": [
+        "Vitamin A supplementation schedule",
+        "Age-based supplementation",
+        "Dose timing",
+        "Supplementation frequency"
+      ],
+      "url": "https://www.mohfw.gov.in/sites/default/files/National%20Immunization%20Schedule.pdf",
+      "last_verified": "2026-08-11",
+      "notes": "Vitamin A supplementation is represented separately from vaccines in the JeevanSetu dataset."
+    }
+  ],
+  "source_priority": {
+    "outbreak_alerts": [
+      "NCDC_IDSP",
+      "IHIP_IDSP"
+    ],
+    "vaccination": [
+      "MOHFW_NIS"
+    ],
+    "vitamin_a": [
+      "MOHFW_VITAMIN_A"
+    ],
+    "disease_information": [
+      "WHO_DISEASES",
+      "NCDC_IDSP"
+    ]
+  },
+  "retrieval_rules": {
+    "disease_information": "Use WHO or relevant official Indian health sources for general disease information.",
+    "vaccination_information": "Prefer the latest Government of India Ministry of Health and Family Welfare schedule.",
+    "vitamin_a_information": "Use the Government of India National Immunization Schedule and keep Vitamin A separate from vaccines.",
+    "outbreak_information": "Use verified NCDC IDSP/IHIP surveillance information only.",
+    "conflicting_information": "For India-specific public-health programmes, prefer the latest applicable Government of India guidance.",
+    "outdated_information": "Do not use information whose validity cannot be established when a newer official source is available."
+  },
+  "critical_notes": [
+    "Government of India sources should take priority for India-specific vaccination and outbreak information.",
+    "WHO may be used for general disease information, symptoms, prevention and risk information.",
+    "The chatbot must not treat an LLM-generated statement as a healthcare source.",
+    "Healthcare claims should retain source information wherever possible.",
+    "Outbreak information must be verified before being presented as a real alert.",
+    "Demo outbreak data must never be presented as real-world surveillance data.",
+    "Source information should be periodically re-verified because healthcare guidelines and surveillance information can change."
+  ],
+  "response_restrictions": [
+    "Do not invent medical facts.",
+    "Do not invent vaccination dates, vaccine doses or schedules.",
+    "Do not invent outbreak locations, case counts, alert levels or dates.",
+    "Do not diagnose a disease based only on symptoms.",
+    "Do not prescribe medication or individualized medication dosages.",
+    "Do not create personalized vaccination catch-up schedules.",
+    "Do not present unverified outbreak information as fact.",
+    "Do not present prototype or DEMO data as real-world health information.",
+    "For emergency symptoms, prioritize seeking professional medical care.",
+    "When sources conflict, prefer the latest applicable official Government of India guidance for India-specific programmes."
+  ],
+  "rag_source_format": {
+    "required_fields": [
+      "source_id",
+      "organization",
+      "source_url",
+      "last_verified"
+    ],
+    "recommended_response_attribution": "According to the referenced healthcare source..."
+  }
+}

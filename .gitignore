@@ -1,6 +1,11 @@
 .venv/
-__pycache__/
-*.py[cod]
-.env
-.env.*
+
+**pycache**/
+
+*.py[cod]*
+
+*.env*
+
 !.env.example
+
+mock_api.py

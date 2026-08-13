@@ -2,8 +2,8 @@ import os
 from pathlib import Path
 
 import httpx
-from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, UploadFile, File, Request, BackgroundTasks
+from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from faster_whisper import WhisperModel
@@ -18,6 +18,25 @@ BASE_DIR = Path(__file__).parent
 M2_CHAT_URL = os.getenv(
     "M2_CHAT_URL",
     "http://127.0.0.1:8000/api/v1/chat"
+)
+
+# WhatsApp Cloud API configuration
+# Keep secrets in environment variables. Do NOT hard-code the access token.
+WHATSAPP_VERIFY_TOKEN = os.getenv(
+    "WHATSAPP_VERIFY_TOKEN",
+    "jeevan_setu_webhook"
+)
+WHATSAPP_ACCESS_TOKEN = os.getenv(
+    "WHATSAPP_ACCESS_TOKEN",
+    ""
+)
+WHATSAPP_PHONE_NUMBER_ID = os.getenv(
+    "WHATSAPP_PHONE_NUMBER_ID",
+    ""
+)
+WHATSAPP_API_VERSION = os.getenv(
+    "WHATSAPP_API_VERSION",
+    "v25.0"
 )
 
 # Whisper model
@@ -514,6 +533,150 @@ async def voice_chat(
 
             except OSError:
                 pass
+
+
+# ============================================================
+# WhatsApp Cloud API Webhook
+# ============================================================
+
+@app.get("/webhook")
+async def verify_whatsapp_webhook(request: Request):
+    """Verify the webhook when Meta sends the initial subscription challenge."""
+    params = request.query_params
+
+    mode = params.get("hub.mode")
+    token = params.get("hub.verify_token")
+    challenge = params.get("hub.challenge")
+
+    if mode == "subscribe" and token == WHATSAPP_VERIFY_TOKEN and challenge:
+        return PlainTextResponse(challenge)
+
+    return PlainTextResponse("Verification failed", status_code=403)
+
+
+async def send_whatsapp_text(recipient: str, message: str):
+    """Send a plain-text reply through the WhatsApp Cloud API."""
+    if not WHATSAPP_ACCESS_TOKEN or not WHATSAPP_PHONE_NUMBER_ID:
+        print(
+            "WhatsApp credentials are missing. Set "
+            "WHATSAPP_ACCESS_TOKEN and WHATSAPP_PHONE_NUMBER_ID."
+        )
+        return
+
+    url = (
+        f"https://graph.facebook.com/"
+        f"{WHATSAPP_API_VERSION}/"
+        f"{WHATSAPP_PHONE_NUMBER_ID}/messages"
+    )
+
+    payload = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": recipient,
+        "type": "text",
+        "text": {
+            "preview_url": False,
+            "body": message
+        }
+    }
+
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            response = await client.post(
+                url,
+                headers=headers,
+                json=payload
+            )
+
+        response.raise_for_status()
+        print("WhatsApp reply sent successfully:", response.json())
+
+    except httpx.HTTPStatusError as error:
+        print(
+            "WhatsApp API returned HTTP "
+            f"{error.response.status_code}: {error.response.text}"
+        )
+
+    except httpx.HTTPError as error:
+        print(f"WhatsApp API request failed: {error}")
+
+
+async def process_whatsapp_message(message_data: dict):
+    """Process one incoming WhatsApp text message and send the M2 reply."""
+    try:
+        message = message_data["messages"][0]
+        sender = message["from"]
+
+        # This first version handles text messages only.
+        if message.get("type") != "text":
+            await send_whatsapp_text(
+                sender,
+                "Sorry, I can currently process text messages only."
+            )
+            return
+
+        text = message.get("text", {}).get("body", "").strip()
+
+        if not text:
+            return
+
+        print(f"WhatsApp message from {sender}: {text}")
+
+        # Reuse the existing M3 -> M2 chat pipeline.
+        chat_payload = ChatRequest(
+            user_id=f"whatsapp:{sender}",
+            message=text,
+            channel="whatsapp"
+        )
+
+        result = await relay_chat(chat_payload)
+        reply = result.get(
+            "response",
+            "Sorry, I could not generate a response right now."
+        )
+
+        await send_whatsapp_text(sender, reply)
+
+    except Exception as error:
+        print(f"WhatsApp message processing failed: {error}")
+
+
+@app.post("/webhook")
+async def receive_whatsapp_webhook(
+    request: Request,
+    background_tasks: BackgroundTasks
+):
+    """Receive WhatsApp webhook events from Meta."""
+    try:
+        body = await request.json()
+        print("WhatsApp webhook received:", body)
+
+        # Only process WhatsApp Business Account change events.
+        if body.get("object") != "whatsapp_business_account":
+            return {"status": "ignored"}
+
+        for entry in body.get("entry", []):
+            for change in entry.get("changes", []):
+                value = change.get("value", {})
+
+                # Incoming customer messages are inside value.messages.
+                if value.get("messages"):
+                    background_tasks.add_task(
+                        process_whatsapp_message,
+                        value
+                    )
+
+        # Return immediately so Meta receives a successful webhook response.
+        return {"status": "received"}
+
+    except Exception as error:
+        print(f"Invalid WhatsApp webhook payload: {error}")
+        return {"status": "error"}
 
 
 # ============================================================

@@ -8,124 +8,74 @@ const footerText = document.querySelector('#footerText');
 
 
 // ============================================================
-// Language Configuration
+// UI translations
 // ============================================================
-
-const languageLabels = {
-  en: 'English',
-  hi: 'हिंदी',
-  mr: 'मराठी'
-};
-
 
 const uiText = {
-
-  // ==========================================================
-  // English
-  // ==========================================================
-
   en: {
-    selected: 'Language selected: English. Please type your health question.',
+    welcome:
+      'Welcome to JeevanSetu AI.\nAsk your health question in English, Hindi, or Marathi.',
     placeholder: 'Type a health question',
-    statusOnline: 'Health assistant • online',
-    statusProcessing: 'JeevanSetu AI is processing…',
+    online: 'Health assistant • online',
+    processing: 'JeevanSetu AI is processing…',
     typing: 'JeevanSetu AI is typing…',
-    welcome: 'Welcome to JeevanSetu AI.\nChoose your language:',
-    chooseLanguage: 'Choose your language / भाषा निवडा:',
-    cannotContact: 'Could not contact the chat service. Please make sure the M2 backend is running.',
-    voiceUnsupported: 'Voice input is not supported in this browser. Use Chrome or Edge.',
-    chooseLanguageVoice: 'Please choose a language before using voice input.',
     listening: 'Listening… Speak now',
-    voiceSending: 'Voice message sent — JeevanSetu AI is responding…',
+    voiceSending:
+      'Voice message received — JeevanSetu AI is responding…',
+    cannotContact:
+      'Could not contact the chat service. Please make sure the M2 backend is running.',
+    voiceUnsupported:
+      'Voice input is not supported in this browser. Use Chrome or Edge.',
     voiceError: 'Voice input error',
     tryAgain: 'Please try again or type your question.',
-    footer: 'AI health information only — not a diagnosis. For emergencies, call 112.'
+    footer:
+      'AI health information only — not a diagnosis. For emergencies, call 112.'
   },
-
-
-  // ==========================================================
-  // Hindi
-  // ==========================================================
 
   hi: {
-    selected: 'भाषा चुनी गई: हिंदी। कृपया अपना स्वास्थ्य प्रश्न लिखें।',
+    welcome:
+      'JeevanSetu AI में आपका स्वागत है।\nअपना स्वास्थ्य प्रश्न हिंदी, अंग्रेज़ी या मराठी में लिखें या बोलें।',
     placeholder: 'अपना स्वास्थ्य प्रश्न लिखें',
-    statusOnline: 'स्वास्थ्य सहायक • ऑनलाइन',
-    statusProcessing: 'JeevanSetu AI उत्तर तैयार कर रहा है…',
+    online: 'स्वास्थ्य सहायक • ऑनलाइन',
+    processing: 'JeevanSetu AI उत्तर तैयार कर रहा है…',
     typing: 'JeevanSetu AI लिख रहा है…',
-    welcome: 'JeevanSetu AI में आपका स्वागत है।\nअपनी भाषा चुनें:',
-    chooseLanguage: 'अपनी भाषा चुनें:',
-    cannotContact: 'चैट सेवा से संपर्क नहीं हो सका। कृपया सुनिश्चित करें कि M2 बैकएंड चल रहा है।',
-    voiceUnsupported: 'इस ब्राउज़र में वॉइस इनपुट उपलब्ध नहीं है। Chrome या Edge का उपयोग करें।',
-    chooseLanguageVoice: 'वॉइस इनपुट का उपयोग करने से पहले भाषा चुनें।',
     listening: 'सुन रहा है… बोलें',
-    voiceSending: 'वॉइस संदेश भेजा गया — JeevanSetu AI उत्तर दे रहा है…',
+    voiceSending:
+      'वॉइस संदेश प्राप्त हुआ — JeevanSetu AI उत्तर दे रहा है…',
+    cannotContact:
+      'चैट सेवा से संपर्क नहीं हो सका। कृपया सुनिश्चित करें कि M2 बैकएंड चल रहा है।',
+    voiceUnsupported:
+      'इस ब्राउज़र में वॉइस इनपुट उपलब्ध नहीं है। Chrome या Edge का उपयोग करें।',
     voiceError: 'वॉइस इनपुट में त्रुटि',
     tryAgain: 'कृपया फिर से प्रयास करें या अपना प्रश्न लिखें।',
-    footer: 'यह केवल स्वास्थ्य संबंधी जानकारी है — यह चिकित्सा निदान नहीं है। आपात स्थिति में 112 पर कॉल करें।'
+    footer:
+      'यह केवल स्वास्थ्य संबंधी जानकारी है — यह चिकित्सा निदान नहीं है। आपात स्थिति में 112 पर कॉल करें।'
   },
 
-
-  // ==========================================================
-  // Marathi
-  // ==========================================================
-
   mr: {
-    selected: 'भाषा निवडली: मराठी. कृपया तुमचा आरोग्यविषयक प्रश्न लिहा.',
+    welcome:
+      'JeevanSetu AI मध्ये आपले स्वागत आहे.\nतुमचा आरोग्यविषयक प्रश्न मराठी, हिंदी किंवा इंग्रजीमध्ये लिहा किंवा बोला.',
     placeholder: 'तुमचा आरोग्यविषयक प्रश्न लिहा',
-    statusOnline: 'आरोग्य सहाय्यक • ऑनलाइन',
-    statusProcessing: 'JeevanSetu AI उत्तर तयार करत आहे…',
+    online: 'आरोग्य सहाय्यक • ऑनलाइन',
+    processing: 'JeevanSetu AI उत्तर तयार करत आहे…',
     typing: 'JeevanSetu AI लिहित आहे…',
-    welcome: 'JeevanSetu AI मध्ये आपले स्वागत आहे.\nतुमची भाषा निवडा:',
-    chooseLanguage: 'तुमची भाषा निवडा:',
-    cannotContact: 'चॅट सेवेशी संपर्क होऊ शकला नाही. कृपया M2 बॅकएंड सुरू आहे याची खात्री करा.',
-    voiceUnsupported: 'या ब्राउझरमध्ये व्हॉइस इनपुट उपलब्ध नाही. Chrome किंवा Edge वापरा.',
-    chooseLanguageVoice: 'व्हॉइस इनपुट वापरण्यापूर्वी भाषा निवडा.',
     listening: 'ऐकत आहे… बोला',
-    voiceSending: 'व्हॉइस संदेश पाठवला आहे — JeevanSetu AI उत्तर देत आहे…',
+    voiceSending:
+      'व्हॉइस संदेश प्राप्त झाला — JeevanSetu AI उत्तर देत आहे…',
+    cannotContact:
+      'चॅट सेवेशी संपर्क होऊ शकला नाही. कृपया M2 बॅकएंड सुरू आहे याची खात्री करा.',
+    voiceUnsupported:
+      'या ब्राउझरमध्ये व्हॉइस इनपुट उपलब्ध नाही. Chrome किंवा Edge वापरा.',
     voiceError: 'व्हॉइस इनपुटमध्ये त्रुटी',
     tryAgain: 'कृपया पुन्हा प्रयत्न करा किंवा तुमचा प्रश्न लिहा.',
-    footer: 'ही केवळ आरोग्यविषयक माहिती आहे — हे वैद्यकीय निदान नाही. आपत्कालीन परिस्थितीत 112 वर कॉल करा.'
+    footer:
+      'ही केवळ आरोग्यविषयक माहिती आहे — हे वैद्यकीय निदान नाही. आपत्कालीन परिस्थितीत 112 वर कॉल करा.'
   }
-
 };
 
 
 // ============================================================
-// Quick Reply Buttons
-// ============================================================
-
-const quickReplyLabels = {
-
-  en: [
-    ['Dengue symptoms', 'What are dengue symptoms?'],
-    ['Prevention tips', 'Give prevention tips'],
-    ['Vaccination', 'Vaccination schedule'],
-    ['Outbreak alerts', 'Is there an outbreak alert?'],
-    ['Emergency help', 'I have severe chest pain']
-  ],
-
-  hi: [
-    ['डेंग्यू लक्षण', 'डेंग्यू के लक्षण क्या हैं?'],
-    ['बचाव सलाह', 'बचाव के उपाय बताएं'],
-    ['टीकाकरण', 'टीकाकरण की जानकारी'],
-    ['आउटब्रेक अलर्ट', 'क्या कोई आउटब्रेक अलर्ट है?'],
-    ['आपात मदद', 'मुझे सीने में तेज दर्द है']
-  ],
-
-  mr: [
-    ['डेंग्यू लक्षणे', 'मला डेंग्यूची लक्षणे सांगा'],
-    ['प्रतिबंध', 'प्रतिबंधाचे उपाय सांगा'],
-    ['लसीकरण', 'लसीकरणाची माहिती'],
-    ['उद्रेक सूचना', 'उद्रेकाची सूचना आहे का?'],
-    ['आणीबाणी मदत', 'माझ्या छातीत तीव्र दुखत आहे']
-  ]
-
-};
-
-
-// ============================================================
-// User ID
+// State
 // ============================================================
 
 let language = null;
@@ -142,11 +92,10 @@ localStorage.setItem(
 
 
 // ============================================================
-// Add Chat Bubble
+// Add message bubble
 // ============================================================
 
 function addBubble(text, type = 'bot', meta = '') {
-
   const node = document.createElement('div');
 
   node.className = `bubble ${type}`;
@@ -154,7 +103,6 @@ function addBubble(text, type = 'bot', meta = '') {
   node.textContent = text;
 
   if (meta) {
-
     const note = document.createElement('div');
 
     note.className = 'meta';
@@ -173,108 +121,278 @@ function addBubble(text, type = 'bot', meta = '') {
 
 
 // ============================================================
-// Update Interface Language
+// Marathi detection
+// ============================================================
+
+function containsMarathiWord(text) {
+
+  const marathiWords = [
+
+    // Health-related Marathi
+    'डोकेदुखी',
+    'अंगदुखी',
+    'पोटदुखी',
+    'घशात',
+    'खोकला',
+    'मळमळ',
+    'उलटी',
+    'जुलाब',
+    'ताप',
+    'चक्कर',
+    'थकवा',
+    'भूक',
+    'श्वास',
+    'छातीत',
+    'दुखत',
+    'दुखणे',
+    'दुखतं',
+    'वेदना',
+    'जखम',
+    'सूज',
+    'खाज',
+    'रक्तदाब',
+    'मधुमेह',
+    'लसीकरण',
+    'लस',
+    'लक्षणे',
+    'लक्षण',
+    'आरोग्य',
+    'आजारी',
+    'तपासणी',
+    'औषध',
+    'डॉक्टर',
+    'रुग्ण',
+    'रुग्णालय',
+
+    // Common Marathi words
+    'मला',
+    'माझा',
+    'माझी',
+    'माझे',
+    'माझ्या',
+    'आहे',
+    'आहेत',
+    'काय',
+    'कसे',
+    'कशी',
+    'कधी',
+    'कुठे',
+    'कोठे',
+    'का',
+    'म्हणजे',
+    'माहिती',
+    'सांगा',
+    'सांग',
+    'करावे',
+    'करायचे',
+    'करू',
+    'होते',
+    'होत',
+    'नाही',
+    'नसते',
+    'यासाठी',
+    'यावर',
+    'म्हणून',
+    'प्रतिबंध',
+    'उद्रेक',
+    'बचाव',
+    'कृपया',
+    'तुमचा',
+    'तुमची',
+    'तुमचे',
+    'माझं',
+    'माझ्या'
+  ];
+
+  return marathiWords.some(
+    word => text.includes(word)
+  );
+}
+
+
+// ============================================================
+// Detect language from text
+// ============================================================
+
+function detectLanguage(text) {
+
+  const value =
+    text.trim().toLowerCase();
+
+  if (!value) {
+    return 'en';
+  }
+
+
+  // ----------------------------------------------------------
+  // Marathi-specific detection
+  // ----------------------------------------------------------
+
+  if (containsMarathiWord(value)) {
+    return 'mr';
+  }
+
+
+  // ----------------------------------------------------------
+  // Roman Marathi detection
+  // ----------------------------------------------------------
+
+  const romanMarathiWords = [
+
+    'mala',
+    'majha',
+    'majhi',
+    'maje',
+    'majhya',
+    'ahe',
+    'ahet',
+    'kay',
+    'kasa',
+    'kashi',
+    'kadhi',
+    'kuthe',
+    'ka',
+    'sanga',
+    'sang',
+    'mala mahiti',
+    'mala sanga',
+    'lakshane',
+    'laksane',
+    'arogya',
+    'aarogya',
+    'dengue chi',
+    'dengyu chi',
+    'taap',
+    'dokyala',
+    'dokhedukh',
+    'angdukhi',
+    'pott dukhat',
+    'khokla',
+    'malmal',
+    'ulti',
+    'julaab',
+    'lavkar',
+    'pratibandh',
+    'lasikaran',
+    'lasi'
+  ];
+
+  if (
+    romanMarathiWords.some(
+      word => value.includes(word)
+    )
+  ) {
+    return 'mr';
+  }
+
+
+  // ----------------------------------------------------------
+  // Hindi detection
+  // ----------------------------------------------------------
+
+  const hindiWords = [
+
+    'मुझे',
+    'मेरा',
+    'मेरी',
+    'मेरे',
+    'क्या',
+    'कैसे',
+    'कैसी',
+    'कब',
+    'कहाँ',
+    'क्यों',
+    'बताएं',
+    'बताइए',
+    'जानकारी',
+    'लक्षण',
+    'बुखार',
+    'सिरदर्द',
+    'पेट दर्द',
+    'खांसी',
+    'उल्टी',
+    'दस्त',
+    'टीका',
+    'टीकाकरण',
+    'रोकथाम',
+    'बचाव',
+    'स्वास्थ्य',
+    'डॉक्टर',
+    'अस्पताल',
+    'दर्द'
+  ];
+
+  if (
+    hindiWords.some(
+      word => value.includes(word)
+    )
+  ) {
+    return 'hi';
+  }
+
+
+  // ----------------------------------------------------------
+  // Devanagari fallback
+  // ----------------------------------------------------------
+
+  if (
+    [...value].some(
+      char =>
+        char >= '\u0900' &&
+        char <= '\u097F'
+    )
+  ) {
+    return 'hi';
+  }
+
+
+  // ----------------------------------------------------------
+  // English default
+  // ----------------------------------------------------------
+
+  return 'en';
+}
+
+
+// ============================================================
+// Update interface language
 // ============================================================
 
 function updateInterfaceLanguage() {
 
-  if (!language) return;
-
-  const text = uiText[language];
-
-  input.placeholder = text.placeholder;
-
-  status.textContent = text.statusOnline;
-
-  footerText.textContent = text.footer;
-}
-
-
-// ============================================================
-// Language Selection Menu
-// ============================================================
-
-function languageMenu() {
-
-  const welcomeText =
-    language === null
-      ? 'Welcome to JeevanSetu .\nChoose your language / भाषा निवडा  / अपनी भाषा चुनें: '
-      : uiText[language].welcome;
-
-  const node = addBubble(welcomeText);
-
-  for (const [code, label] of Object.entries(languageLabels)) {
-
-    const button =
-      document.createElement('button');
-
-    button.className = 'choice';
-
-    button.textContent = label;
-
-    button.onclick = () => {
-
-      language = code;
-
-      const text = uiText[language];
-
-      node.remove();
-
-      // Update all UI text
-      updateInterfaceLanguage();
-
-      // First message after selecting language
-      addBubble(text.selected);
-
-      // Show quick replies
-      quickReplies();
-
-      input.focus();
-    };
-
-    node.append(button);
-  }
-}
-
-
-// ============================================================
-// Quick Replies
-// ============================================================
-
-function quickReplies() {
-
-  const labels = quickReplyLabels[language];
-
-  const container =
-    document.createElement('div');
-
-  container.className = 'quick-replies';
-
-  for (const [label, text] of labels) {
-
-    const button =
-      document.createElement('button');
-
-    button.className = 'quick-reply';
-
-    button.textContent = label;
-
-    button.onclick = () => {
-      sendMessage(text);
-    };
-
-    container.append(button);
+  if (!language) {
+    return;
   }
 
-  messages.append(container);
+  const text =
+    uiText[language];
 
-  messages.scrollTop =
-    messages.scrollHeight;
+  input.placeholder =
+    text.placeholder;
+
+  status.textContent =
+    text.online;
+
+  footerText.textContent =
+    text.footer;
 }
 
 
 // ============================================================
-// Typing Indicator
+// Welcome
+// ============================================================
+
+function showWelcome() {
+
+  addBubble(
+    'Welcome to JeevanSetu AI.\n' +
+    'Ask your health question in English, Hindi, or Marathi.'
+  );
+}
+
+
+// ============================================================
+// Typing indicator
 // ============================================================
 
 function showTyping() {
@@ -300,7 +418,7 @@ function showTyping() {
 
 
 // ============================================================
-// Reset Chat
+// Reset
 // ============================================================
 
 function resetChat() {
@@ -322,14 +440,14 @@ function resetChat() {
   footerText.textContent =
     'AI health information only — not a diagnosis. For emergencies, call 112.';
 
-  languageMenu();
+  showWelcome();
 
   input.focus();
 }
 
 
 // ============================================================
-// Text-to-Speech
+// Text-to-speech
 // ============================================================
 
 function speakReply(text, replyLanguage) {
@@ -362,17 +480,19 @@ function speakReply(text, replyLanguage) {
     window.speechSynthesis
       .getVoices()
       .find(
-        (voice) =>
+        voice =>
           voice.lang
             .toLowerCase()
             .startsWith(languagePrefix)
       );
 
   if (matchingVoice) {
-    utterance.voice = matchingVoice;
+    utterance.voice =
+      matchingVoice;
   }
 
-  utterance.rate = 0.95;
+  utterance.rate =
+    0.95;
 
   window.speechSynthesis.speak(
     utterance
@@ -381,17 +501,7 @@ function speakReply(text, replyLanguage) {
 
 
 // ============================================================
-// Start Application
-// ============================================================
-
-function start() {
-
-  languageMenu();
-}
-
-
-// ============================================================
-// Send Message
+// Send message
 // ============================================================
 
 async function sendMessage(
@@ -406,12 +516,17 @@ async function sendMessage(
     return;
   }
 
-  if (!language) {
 
-    languageMenu();
+  // Automatically detect language.
+  language =
+    detectLanguage(message);
 
-    return;
-  }
+
+  updateInterfaceLanguage();
+
+  const selectedLanguage =
+    uiText[language];
+
 
   addBubble(
     message,
@@ -423,10 +538,12 @@ async function sendMessage(
   input.disabled = true;
 
   status.textContent =
-    uiText[language].statusProcessing;
+    selectedLanguage.processing;
+
 
   const typing =
     showTyping();
+
 
   try {
 
@@ -445,10 +562,11 @@ async function sendMessage(
             user_id: userId,
             message: message,
             language: language,
-            channel: 'whatsapp'
+            channel: 'web'
           })
         }
       );
+
 
     if (!res.ok) {
       throw new Error(
@@ -456,15 +574,35 @@ async function sendMessage(
       );
     }
 
+
     const data =
       await res.json();
 
+
     typing.remove();
+
+
+    // Keep the detected language unless
+    // M2 explicitly returns another supported language.
+    const replyLanguage =
+      ['en', 'hi', 'mr'].includes(
+        data.language
+      )
+        ? data.language
+        : language;
+
+    language =
+      replyLanguage;
+
+
+    updateInterfaceLanguage();
+
 
     const type =
       data.safety_level === 'emergency'
         ? 'bot emergency'
         : 'bot';
+
 
     const sourceText =
       data.source === 'm2'
@@ -473,26 +611,29 @@ async function sendMessage(
           ? 'offline fallback'
           : 'JeevanSetu AI';
 
+
     addBubble(
       data.response,
       type,
       `${data.category} • ${data.safety_level} • ${sourceText}`
     );
 
+
     if (shouldSpeakReply) {
 
       speakReply(
         data.response,
-        data.language
+        language
       );
     }
+
 
   } catch (error) {
 
     typing.remove();
 
     addBubble(
-      uiText[language].cannotContact,
+      selectedLanguage.cannotContact,
       'bot emergency'
     );
 
@@ -501,7 +642,9 @@ async function sendMessage(
     input.disabled = false;
 
     status.textContent =
-      uiText[language].statusOnline;
+      uiText[
+        language || 'en'
+      ].online;
 
     input.focus();
   }
@@ -509,19 +652,20 @@ async function sendMessage(
 
 
 // ============================================================
-// Form Submit
+// Form submit
 // ============================================================
 
 form.addEventListener(
   'submit',
-  (event) => {
+  event => {
 
     event.preventDefault();
 
     const shouldSpeakReply =
       voiceMessageReady;
 
-    voiceMessageReady = false;
+    voiceMessageReady =
+      false;
 
     sendMessage(
       input.value,
@@ -532,20 +676,19 @@ form.addEventListener(
 
 
 // ============================================================
-// Input Event
+// Input
 // ============================================================
 
 input.addEventListener(
   'input',
   () => {
-
     voiceMessageReady = false;
   }
 );
 
 
 // ============================================================
-// Reset Button
+// Reset
 // ============================================================
 
 resetButton.addEventListener(
@@ -555,7 +698,7 @@ resetButton.addEventListener(
 
 
 // ============================================================
-// Voice Recognition
+// Voice recognition
 // ============================================================
 
 const SpeechRecognition =
@@ -568,7 +711,7 @@ if (!SpeechRecognition) {
   voiceButton.disabled = true;
 
   voiceButton.title =
-    'Voice input is not supported in this browser.';
+    'Voice input is not supported in this browser. Use Chrome or Edge.';
 
 } else {
 
@@ -579,35 +722,45 @@ if (!SpeechRecognition) {
     false;
 
   recognition.maxAlternatives =
-    1;
+    3;
 
-  let voiceTextCaptured = false;
+  let voiceTextCaptured =
+    false;
 
 
   voiceButton.addEventListener(
     'click',
     () => {
 
-      if (!language) {
-
-        addBubble(
-          'Please choose a language before using voice input.'
-        );
-
-        return;
-      }
-
       voiceTextCaptured =
         false;
 
-      recognition.lang =
-        {
-          en: 'en-IN',
-          hi: 'hi-IN',
-          mr: 'mr-IN'
-        }[language];
+      const browserLanguage =
+        navigator.language ||
+        'en-IN';
 
-      recognition.start();
+
+      const speechLanguage =
+        browserLanguage
+          .toLowerCase()
+          .startsWith('hi')
+          ? 'hi-IN'
+          : browserLanguage
+              .toLowerCase()
+              .startsWith('mr')
+            ? 'mr-IN'
+            : 'en-IN';
+
+
+      recognition.lang =
+        speechLanguage;
+
+
+      try {
+        recognition.start();
+      } catch (_) {
+        // Already running.
+      }
     }
   );
 
@@ -623,24 +776,41 @@ if (!SpeechRecognition) {
         '■';
 
       status.textContent =
-        uiText[language].listening;
+        uiText[
+          language || 'en'
+        ].listening;
     };
 
 
   recognition.onresult =
-    (event) => {
+    event => {
 
       const spokenText =
-        event.results[0][0].transcript;
+        event.results[0][0]
+          .transcript;
+
 
       voiceTextCaptured =
         true;
 
       voiceMessageReady =
-        false;
+        true;
+
+
+      // Detect language from the transcript.
+      language =
+        detectLanguage(
+          spokenText
+        );
+
+
+      updateInterfaceLanguage();
+
 
       status.textContent =
-        uiText[language].voiceSending;
+        uiText[language]
+          .voiceSending;
+
 
       sendMessage(
         spokenText,
@@ -650,12 +820,19 @@ if (!SpeechRecognition) {
 
 
   recognition.onerror =
-    (event) => {
+    event => {
 
-      if (event.error !== 'aborted') {
+      if (
+        event.error !== 'aborted'
+      ) {
+
+        const currentText =
+          uiText[
+            language || 'en'
+          ];
 
         addBubble(
-          `${uiText[language].voiceError}: ${event.error}. ${uiText[language].tryAgain}`,
+          `${currentText.voiceError}: ${event.error}. ${currentText.tryAgain}`,
           'bot'
         );
       }
@@ -672,12 +849,13 @@ if (!SpeechRecognition) {
       voiceButton.textContent =
         '🎙';
 
+
       if (!voiceTextCaptured) {
 
         status.textContent =
-          uiText[language]
-            ? uiText[language].statusOnline
-            : 'Health assistant • online';
+          uiText[
+            language || 'en'
+          ].online;
       }
     };
 }
@@ -687,4 +865,4 @@ if (!SpeechRecognition) {
 // Start
 // ============================================================
 
-start();
+showWelcome();

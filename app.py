@@ -2,10 +2,11 @@ import os
 from pathlib import Path
 
 import httpx
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
+from faster_whisper import WhisperModel
 
 
 # ============================================================
@@ -14,22 +15,22 @@ from pydantic import BaseModel, Field
 
 BASE_DIR = Path(__file__).parent
 
-# Real M2 Backend API
-#
-# Default:
-# http://127.0.0.1:8000/api/v1/chat
-#
-# You can override this using:
-# M2_CHAT_URL=http://127.0.0.1:8000/api/v1/chat
-#
 M2_CHAT_URL = os.getenv(
     "M2_CHAT_URL",
     "http://127.0.0.1:8000/api/v1/chat"
 )
 
+# Whisper model
+# "base" is a good balance for a prototype.
+# For better accuracy, you can later use "small".
+WHISPER_MODEL_SIZE = os.getenv(
+    "WHISPER_MODEL_SIZE",
+    "base"
+)
+
 
 # ============================================================
-# FastAPI Application
+# FastAPI
 # ============================================================
 
 app = FastAPI(
@@ -37,8 +38,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-
-# Serve frontend
 app.mount(
     "/static",
     StaticFiles(
@@ -49,11 +48,27 @@ app.mount(
 
 
 # ============================================================
-# M3 Request Model
+# Load Whisper
+# ============================================================
+
+print(
+    f"Loading Whisper model: {WHISPER_MODEL_SIZE}"
+)
+
+whisper_model = WhisperModel(
+    WHISPER_MODEL_SIZE,
+    device="cpu",
+    compute_type="int8"
+)
+
+print("Whisper model loaded successfully.")
+
+
+# ============================================================
+# Request Model
 # ============================================================
 
 class ChatRequest(BaseModel):
-
     user_id: str = Field(
         min_length=1,
         max_length=100
@@ -64,17 +79,13 @@ class ChatRequest(BaseModel):
         max_length=2000
     )
 
-    language: str = Field(
-        pattern="^(en|hi|mr)$"
-    )
+    language: str | None = None
 
-    channel: str = Field(
-        default="web"
-    )
+    channel: str = "web"
 
 
 # ============================================================
-# Home Page
+# Home
 # ============================================================
 
 @app.get(
@@ -89,7 +100,7 @@ async def home():
 
 
 # ============================================================
-# M3 Health Check
+# Health
 # ============================================================
 
 @app.get("/health")
@@ -98,12 +109,121 @@ async def health():
     return {
         "status": "ok",
         "service": "M3",
-        "m2_chat_url": M2_CHAT_URL
+        "m2_chat_url": M2_CHAT_URL,
+        "whisper_model": WHISPER_MODEL_SIZE
     }
 
 
 # ============================================================
-# M3 → M2 Chat Relay
+# Text Language Detection
+# ============================================================
+
+def detect_text_language(message: str) -> str:
+
+    text = message.strip().lower()
+
+    if not text:
+        return "en"
+
+    # Marathi-specific words
+    marathi_words = [
+        "डोकेदुखी",
+        "अंगदुखी",
+        "पोटदुखी",
+        "खोकला",
+        "मळमळ",
+        "उलटी",
+        "जुलाब",
+        "ताप",
+        "चक्कर",
+        "थकवा",
+        "श्वास",
+        "छातीत",
+        "दुखत",
+        "दुखणे",
+        "लसीकरण",
+        "लस",
+        "लक्षणे",
+        "आरोग्य",
+        "तपासणी",
+        "औषध",
+        "रुग्णालय",
+        "मला",
+        "माझा",
+        "माझी",
+        "माझे",
+        "माझ्या",
+        "आहे",
+        "आहेत",
+        "काय",
+        "कसे",
+        "कशी",
+        "कधी",
+        "कुठे",
+        "माहिती",
+        "सांगा",
+        "करावे",
+        "प्रतिबंध",
+        "उद्रेक",
+        "बचाव"
+    ]
+
+    if any(
+        word in text
+        for word in marathi_words
+    ):
+        return "mr"
+
+    # Hindi-specific words
+    hindi_words = [
+        "मुझे",
+        "मेरा",
+        "मेरी",
+        "मेरे",
+        "क्या",
+        "कैसे",
+        "कैसी",
+        "कब",
+        "कहाँ",
+        "क्यों",
+        "बताएं",
+        "बताइए",
+        "जानकारी",
+        "लक्षण",
+        "बुखार",
+        "सिरदर्द",
+        "पेट दर्द",
+        "खांसी",
+        "उल्टी",
+        "दस्त",
+        "टीका",
+        "टीकाकरण",
+        "रोकथाम",
+        "बचाव",
+        "स्वास्थ्य",
+        "डॉक्टर",
+        "अस्पताल",
+        "दर्द"
+    ]
+
+    if any(
+        word in text
+        for word in hindi_words
+    ):
+        return "hi"
+
+    # Devanagari fallback
+    if any(
+        "\u0900" <= char <= "\u097F"
+        for char in text
+    ):
+        return "hi"
+
+    return "en"
+
+
+# ============================================================
+# M3 → M2
 # ============================================================
 
 @app.post("/api/chat")
@@ -111,51 +231,20 @@ async def relay_chat(
     payload: ChatRequest
 ):
 
-    """
-    M3 receives the request from the frontend
-    and forwards it to the real M2 backend.
-
-    M2 endpoint:
-        POST /api/v1/chat
-
-    M2 request format:
-        {
-            "message": "...",
-            "session_id": "...",
-            "channel": "...",
-            "language": "en|hi|mr"
-        }
-
-    M2 response format:
-        {
-            "reply": "...",
-            "session_id": "...",
-            "language": "...",
-            "is_emergency": true/false
-        }
-    """
-
-    # --------------------------------------------------------
-    # Prepare request for M2
-    # --------------------------------------------------------
+    detected_language = (
+        payload.language
+        if payload.language in {"en", "hi", "mr"}
+        else detect_text_language(
+            payload.message
+        )
+    )
 
     m2_payload = {
         "message": payload.message,
-
-        # We use the browser user ID as the M2 session ID.
         "session_id": payload.user_id,
-
-        # Pass the channel information.
         "channel": payload.channel,
-
-        # Pass selected language.
-        "language": payload.language
+        "language": detected_language
     }
-
-
-    # --------------------------------------------------------
-    # Call M2
-    # --------------------------------------------------------
 
     try:
 
@@ -172,96 +261,47 @@ async def relay_chat(
 
             data = response.json()
 
-
-    except httpx.ConnectError as error:
+    except httpx.ConnectError:
 
         return {
             "response": offline_response(
-                payload.language
+                detected_language
             ),
-
-            "language": payload.language,
-
+            "language": detected_language,
             "category": "general",
-
             "safety_level": "warning",
-
             "source": "fallback",
-
-            "error": (
-                "Could not connect to M2. "
-                "Make sure the M2 server is running on "
-                "port 8000."
-            )
+            "error": "Could not connect to M2."
         }
-
 
     except httpx.HTTPStatusError as error:
 
         return {
             "response": offline_response(
-                payload.language
+                detected_language
             ),
-
-            "language": payload.language,
-
+            "language": detected_language,
             "category": "general",
-
             "safety_level": "warning",
-
             "source": "fallback",
-
             "error": (
                 f"M2 returned HTTP "
-                f"{error.response.status_code}: "
-                f"{error.response.text}"
+                f"{error.response.status_code}"
             )
         }
-
 
     except httpx.HTTPError as error:
 
         return {
             "response": offline_response(
-                payload.language
+                detected_language
             ),
-
-            "language": payload.language,
-
+            "language": detected_language,
             "category": "general",
-
             "safety_level": "warning",
-
             "source": "fallback",
-
-            "error": f"M2 API error: {error}"
+            "error": str(error)
         }
-
-
-    except ValueError as error:
-
-        return {
-            "response": offline_response(
-                payload.language
-            ),
-
-            "language": payload.language,
-
-            "category": "general",
-
-            "safety_level": "warning",
-
-            "source": "fallback",
-
-            "error": (
-                f"M2 returned invalid JSON: {error}"
-            )
-        }
-
-
-    # --------------------------------------------------------
-    # Convert M2 response into M3 response
-    # --------------------------------------------------------
 
     reply = data.get(
         "reply",
@@ -273,7 +313,7 @@ async def relay_chat(
 
     response_language = data.get(
         "language",
-        payload.language
+        detected_language
     )
 
     is_emergency = data.get(
@@ -281,36 +321,16 @@ async def relay_chat(
         False
     )
 
-
-    # --------------------------------------------------------
-    # Determine safety level
-    # --------------------------------------------------------
-
-    if is_emergency:
-
-        safety_level = "emergency"
-
-    else:
-
-        safety_level = "normal"
-
-
-    # --------------------------------------------------------
-    # Return response to frontend
-    # --------------------------------------------------------
-
     return {
-
         "response": reply,
-
         "language": response_language,
-
         "category": "health",
-
-        "safety_level": safety_level,
-
+        "safety_level": (
+            "emergency"
+            if is_emergency
+            else "normal"
+        ),
         "source": "m2",
-
         "session_id": data.get(
             "session_id",
             payload.user_id
@@ -319,7 +339,185 @@ async def relay_chat(
 
 
 # ============================================================
-# Offline Fallback
+# Voice → Whisper → M2
+# ============================================================
+
+@app.post("/api/voice")
+async def voice_chat(
+    audio: UploadFile = File(...)
+):
+
+    temp_path = (
+        BASE_DIR /
+        "_voice_input.webm"
+    )
+
+    try:
+
+        # ----------------------------------------------------
+        # Save uploaded audio
+        # ----------------------------------------------------
+
+        audio_bytes = await audio.read()
+
+        if not audio_bytes:
+            return {
+                "error": "No audio was received."
+            }
+
+        temp_path.write_bytes(
+            audio_bytes
+        )
+
+
+        # ----------------------------------------------------
+        # Whisper transcription
+        # ----------------------------------------------------
+
+        segments, info = (
+            whisper_model.transcribe(
+                str(temp_path),
+                beam_size=5,
+                vad_filter=True
+            )
+        )
+
+
+        transcript = " ".join(
+            segment.text.strip()
+            for segment in segments
+            if segment.text.strip()
+        ).strip()
+
+
+        if not transcript:
+
+            return {
+                "error":
+                    "Could not understand the audio."
+            }
+
+
+        # ----------------------------------------------------
+        # Whisper language detection
+        # ----------------------------------------------------
+
+        whisper_language = (
+            info.language or "en"
+        ).lower()
+
+
+        # Whisper may return:
+        # en = English
+        # hi = Hindi
+        # mr = Marathi
+        #
+        # Other languages are mapped to English for now.
+
+        if whisper_language not in {
+            "en",
+            "hi",
+            "mr"
+        }:
+            detected_language = (
+                detect_text_language(
+                    transcript
+                )
+            )
+        else:
+            detected_language = (
+                whisper_language
+            )
+
+
+        # ----------------------------------------------------
+        # Send transcription to M2
+        # ----------------------------------------------------
+
+        m2_payload = {
+            "message": transcript,
+            "session_id": "voice-user",
+            "channel": "web",
+            "language": detected_language
+        }
+
+
+        async with httpx.AsyncClient(
+            timeout=30
+        ) as client:
+
+            response = await client.post(
+                M2_CHAT_URL,
+                json=m2_payload
+            )
+
+            response.raise_for_status()
+
+            data = response.json()
+
+
+        reply = data.get(
+            "reply",
+            data.get(
+                "response",
+                "No response was received from M2."
+            )
+        )
+
+
+        response_language = data.get(
+            "language",
+            detected_language
+        )
+
+
+        is_emergency = data.get(
+            "is_emergency",
+            False
+        )
+
+
+        return {
+            "transcript": transcript,
+            "language": response_language,
+            "response": reply,
+            "category": "health",
+            "safety_level": (
+                "emergency"
+                if is_emergency
+                else "normal"
+            ),
+            "source": "m2"
+        }
+
+
+    except httpx.HTTPError as error:
+
+        return {
+            "error":
+                f"M2 API error: {error}"
+        }
+
+    except Exception as error:
+
+        return {
+            "error":
+                f"Voice processing failed: {error}"
+        }
+
+    finally:
+
+        if temp_path.exists():
+
+            try:
+                temp_path.unlink()
+
+            except OSError:
+                pass
+
+
+# ============================================================
+# Offline fallback
 # ============================================================
 
 def offline_response(
@@ -330,27 +528,21 @@ def offline_response(
 
         "en": (
             "The M2 backend is currently unavailable. "
-            "Please start the M2 backend and try again. "
-            "If this is a medical emergency, call 112 "
-            "or seek urgent medical care."
+            "Please start the M2 backend and try again."
         ),
 
         "hi": (
             "M2 बैकएंड अभी उपलब्ध नहीं है। "
-            "कृपया M2 बैकएंड शुरू करके फिर प्रयास करें। "
-            "चिकित्सा आपातस्थिति में 112 पर कॉल करें "
-            "या तुरंत चिकित्सा सहायता लें।"
+            "कृपया M2 बैकएंड शुरू करके फिर प्रयास करें।"
         ),
 
         "mr": (
             "M2 बॅकएंड सध्या उपलब्ध नाही. "
-            "कृपया M2 बॅकएंड सुरू करून पुन्हा प्रयत्न करा. "
-            "वैद्यकीय आणीबाणी असल्यास 112 वर कॉल करा "
-            "किंवा तातडीची वैद्यकीय मदत घ्या."
+            "कृपया M2 बॅकएंड सुरू करून पुन्हा प्रयत्न करा."
         )
     }
 
     return messages.get(
         language,
         messages["en"]
-    )
+    )   

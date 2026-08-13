@@ -1,34 +1,174 @@
 // ============================================================
-// JeevanSetu M3 CHAT.JS
-// M3 UI -> M2 Backend on Render
+// JeevanSetu M3 CHAT UI
+// M3 UI -> M2 FastAPI Backend
+// Supports English, Hindi and Marathi voice input
 // ============================================================
 
-const API_URL = "https://jeevan-setu-1.onrender.com/api/v1/chat";
-
-const messages = document.getElementById("messages");
-const messageInput = document.getElementById("messageInput");
-const composer = document.getElementById("composer");
-const voiceButton = document.getElementById("voiceButton");
-const resetButton = document.getElementById("resetButton");
-const statusText = document.getElementById("status");
-
+const messages = document.querySelector('#messages');
+const form = document.querySelector('#composer');
+const input = document.querySelector('#messageInput');
+const status = document.querySelector('#status');
+const resetButton = document.querySelector('#resetButton');
+const voiceButton = document.querySelector('#voiceButton');
+const footerText = document.querySelector('#footerText');
 
 // ============================================================
-// SESSION
+// M2 BACKEND
 // ============================================================
 
-let sessionId = localStorage.getItem("jeevansetu_session_id");
+const API_URL =
+  'https://jeevan-setu-1.onrender.com/api/v1/chat';
 
-if (!sessionId) {
-    sessionId =
-        "web-" +
-        Date.now() +
-        "-" +
-        Math.random().toString(36).substring(2, 10);
+// ============================================================
+// UI TEXT
+// ============================================================
 
-    localStorage.setItem("jeevansetu_session_id", sessionId);
+const uiText = {
+  en: {
+    welcome:
+      'Welcome to JeevanSetu AI.\nAsk your health question in English, Hindi, or Marathi.',
+    placeholder: 'Type a health question',
+    online: 'Health assistant • online',
+    processing: 'JeevanSetu AI is processing…',
+    typing: 'JeevanSetu AI is typing…',
+    listening: 'Listening… Speak now',
+    voiceSending: 'Voice message received — JeevanSetu AI is responding…',
+    cannotContact:
+      'Could not contact the chat service. Please make sure the M2 backend is running.',
+    voiceUnsupported:
+      'Voice input is not supported in this browser. Use Chrome or Edge.',
+    voiceError: 'Voice input error',
+    tryAgain: 'Please try again or type your question.',
+    footer:
+      'AI health information only — not a diagnosis. For emergencies, call 112.'
+  },
+
+  hi: {
+    welcome:
+      'JeevanSetu AI में आपका स्वागत है।\nअपना स्वास्थ्य संबंधी सवाल हिंदी, मराठी या अंग्रेज़ी में पूछें।',
+    placeholder: 'अपना स्वास्थ्य संबंधी सवाल लिखें',
+    online: 'स्वास्थ्य सहायक • ऑनलाइन',
+    processing: 'JeevanSetu AI जवाब तैयार कर रहा है…',
+    typing: 'JeevanSetu AI लिख रहा है…',
+    listening: 'सुन रहा हूँ… बोलिए',
+    voiceSending:
+      'आवाज़ प्राप्त हुई — JeevanSetu AI जवाब दे रहा है…',
+    cannotContact:
+      'चैट सेवा से संपर्क नहीं हो सका। कृपया M2 backend चालू है या नहीं जांचें।',
+    voiceUnsupported:
+      'इस ब्राउज़र में voice input उपलब्ध नहीं है। Chrome या Edge इस्तेमाल करें।',
+    voiceError: 'Voice input में समस्या',
+    tryAgain: 'कृपया दोबारा प्रयास करें या अपना सवाल लिखें।',
+    footer:
+      'AI स्वास्थ्य जानकारी केवल जानकारी के लिए है — यह निदान नहीं है। आपातकाल में 112 पर कॉल करें।'
+  },
+
+  mr: {
+    welcome:
+      'JeevanSetu AI मध्ये आपले स्वागत आहे.\nतुमचा आरोग्यविषयक प्रश्न मराठी, हिंदी किंवा इंग्रजीमध्ये विचारा.',
+    placeholder: 'तुमचा आरोग्यविषयक प्रश्न लिहा',
+    online: 'आरोग्य सहाय्यक • ऑनलाइन',
+    processing: 'JeevanSetu AI उत्तर तयार करत आहे…',
+    typing: 'JeevanSetu AI लिहित आहे…',
+    listening: 'ऐकत आहे… बोला',
+    voiceSending:
+      'आवाज प्राप्त झाला — JeevanSetu AI उत्तर देत आहे…',
+    cannotContact:
+      'चॅट सेवेशी संपर्क होऊ शकला नाही. कृपया M2 backend चालू आहे का ते तपासा.',
+    voiceUnsupported:
+      'या ब्राउझरमध्ये voice input उपलब्ध नाही. Chrome किंवा Edge वापरा.',
+    voiceError: 'Voice input मध्ये समस्या',
+    tryAgain: 'कृपया पुन्हा प्रयत्न करा किंवा प्रश्न टाइप करा.',
+    footer:
+      'AI आरोग्य माहिती फक्त माहितीसाठी आहे — हे वैद्यकीय निदान नाही. आपत्कालीन परिस्थितीत 112 वर कॉल करा.'
+  }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+
+let language = null;
+let voiceMessageReady = false;
+let isListening = false;
+
+// Session ID used by M2
+const sessionId =
+  localStorage.getItem('jeevansetu_session_id') ||
+  crypto.randomUUID();
+
+localStorage.setItem(
+  'jeevansetu_session_id',
+  sessionId
+);
+
+// ============================================================
+// VOICE LANGUAGE SELECTOR
+// ============================================================
+
+// Create a small language selector beside microphone.
+// This makes Hindi/Marathi recognition much more reliable.
+
+const voiceLanguageSelect = document.createElement('select');
+
+voiceLanguageSelect.id = 'voiceLanguage';
+
+voiceLanguageSelect.title =
+  'Select voice language';
+
+voiceLanguageSelect.innerHTML = `
+  <option value="auto">Auto</option>
+  <option value="en">English</option>
+  <option value="hi">हिंदी</option>
+  <option value="mr">मराठी</option>
+`;
+
+// Insert selector immediately before microphone button
+if (voiceButton && voiceButton.parentNode) {
+  voiceButton.parentNode.insertBefore(
+    voiceLanguageSelect,
+    voiceButton
+  );
 }
 
+// ============================================================
+// ADD MESSAGE
+// ============================================================
+
+function addBubble(
+  text,
+  type = 'bot',
+  meta = ''
+) {
+  const node =
+    document.createElement('div');
+
+  node.className =
+    `bubble ${type}`;
+
+  node.textContent =
+    text;
+
+  if (meta) {
+    const note =
+      document.createElement('div');
+
+    note.className =
+      'meta';
+
+    note.textContent =
+      meta;
+
+    node.append(note);
+  }
+
+  messages.append(node);
+
+  messages.scrollTop =
+    messages.scrollHeight;
+
+  return node;
+}
 
 // ============================================================
 // LANGUAGE DETECTION
@@ -36,152 +176,265 @@ if (!sessionId) {
 
 function detectLanguage(text) {
 
-    // Marathi-specific words
-    const marathiWords = [
-        "आहे",
-        "मला",
-        "माझे",
-        "माझा",
-        "माझी",
-        "काय",
-        "कसे",
-        "कशी",
-        "दुखत",
-        "ताप",
-        "झाला",
-        "झाली",
-        "होतो",
-        "होते",
-        "करावे",
-        "करायचे"
-    ];
+  const value =
+    text.trim().toLowerCase();
 
-    if (marathiWords.some(word => text.includes(word))) {
-        return "mr";
-    }
+  if (!value) {
+    return 'en';
+  }
 
+  // ----------------------------------------------------------
+  // Marathi Devanagari words
+  // ----------------------------------------------------------
 
-    // Devanagari text
-    if (/[\u0900-\u097F]/.test(text)) {
-        return "hi";
-    }
+  const marathiWords = [
+    'मला',
+    'माझा',
+    'माझी',
+    'माझे',
+    'माझ्या',
+    'आहे',
+    'आहेत',
+    'काय',
+    'कसा',
+    'कशी',
+    'कुठे',
+    'कधी',
+    'सांगा',
+    'माहिती',
+    'लक्षणे',
+    'आरोग्य',
+    'ताप',
+    'डोकेदुखी',
+    'अंगदुखी',
+    'पोट दुखत',
+    'खोकला',
+    'मळमळ',
+    'उलटी',
+    'जुलाब',
+    'लसीकरण',
+    'लस',
+    'दुखत',
+    'दुखते',
+    'काय करावे',
+    'काय करू'
+  ];
 
+  if (
+    marathiWords.some(
+      word => value.includes(word)
+    )
+  ) {
+    return 'mr';
+  }
 
-    // Hindi written using English letters
-    const hindiRomanWords = [
-        "mujhe",
-        "mujh",
-        "mera",
-        "meri",
-        "mere",
-        "hai",
-        "hain",
-        "mujko",
-        "bukhar",
-        "sar",
-        "dard",
-        "khansi",
-        "saans",
-        "pet",
-        "nahi",
-        "nahin",
-        "raha",
-        "rahi",
-        "ho",
-        "kya"
-    ];
+  // ----------------------------------------------------------
+  // Hindi Devanagari words
+  // ----------------------------------------------------------
 
-    const lower = text.toLowerCase();
+  const hindiWords = [
+    'मुझे',
+    'मेरा',
+    'मेरी',
+    'मेरे',
+    'मुझको',
+    'क्या',
+    'कैसे',
+    'कैसी',
+    'कहाँ',
+    'कब',
+    'क्यों',
+    'बताइए',
+    'बताओ',
+    'लक्षण',
+    'बीमारी',
+    'बीमार',
+    'बुखार',
+    'सिरदर्द',
+    'सिर दर्द',
+    'दर्द',
+    'खांसी',
+    'उल्टी',
+    'दस्त',
+    'पेट दर्द',
+    'स्वास्थ्य',
+    'सांस',
+    'साँस'
+  ];
 
-    if (
-        hindiRomanWords.some(word =>
-            lower.split(/\s+/).includes(word)
-        )
-    ) {
-        return "hi";
-    }
+  if (
+    hindiWords.some(
+      word => value.includes(word)
+    )
+  ) {
+    return 'hi';
+  }
 
+  // ----------------------------------------------------------
+  // If Devanagari is present
+  // ----------------------------------------------------------
 
-    return "en";
+  if (
+    [...value].some(
+      char =>
+        char >= '\u0900' &&
+        char <= '\u097F'
+    )
+  ) {
+    return 'hi';
+  }
+
+  // ----------------------------------------------------------
+  // Roman Hindi
+  // ----------------------------------------------------------
+
+  const romanHindi = [
+    'mera',
+    'meri',
+    'mere',
+    'mujhe',
+    'mujhko',
+    'mujhse',
+    'aap',
+    'aapko',
+    'aapki',
+    'kya',
+    'kaise',
+    'kaisi',
+    'kaisa',
+    'kahan',
+    'kab',
+    'kyun',
+    'kyon',
+    'batao',
+    'bataye',
+    'bataiye',
+    'mujhe batao',
+    'mujhe bataiye',
+    'sar dukh',
+    'sar dard',
+    'sir dukh',
+    'sir dard',
+    'dard ho',
+    'dard hai',
+    'bukhar',
+    'bukhaar',
+    'khansi',
+    'ulti',
+    'dast',
+    'pet dard',
+    'pet mein dard',
+    'saans lene',
+    'saans nahi',
+    'saans lene mein',
+    'tabiyat',
+    'beemar',
+    'bimaar',
+    'bimari',
+    'ilaj',
+    'ilaaj',
+    'dawai',
+    'dava',
+    'doctor ke paas',
+    'hospital jana',
+    'kya karu',
+    'kya karoon',
+    'kya karna chahiye'
+  ];
+
+  if (
+    romanHindi.some(
+      phrase => value.includes(phrase)
+    )
+  ) {
+    return 'hi';
+  }
+
+  // ----------------------------------------------------------
+  // Roman Marathi
+  // ----------------------------------------------------------
+
+  const romanMarathi = [
+    'mala',
+    'majha',
+    'majhi',
+    'majhe',
+    'majhya',
+    'ahe',
+    'ahet',
+    'kay',
+    'kasa',
+    'kashi',
+    'kuthe',
+    'kadhi',
+    'sanga',
+    'sang',
+    'mala mahiti',
+    'mala sanga',
+    'lakshane',
+    'laksane',
+    'arogya',
+    'aarogya',
+    'taap',
+    'dokyala',
+    'dokhedukh',
+    'angdukhi',
+    'pott dukhat',
+    'khokla',
+    'malmal',
+    'ulti',
+    'julaab',
+    'lavkar',
+    'pratibandh',
+    'lasikaran',
+    'lasi'
+  ];
+
+  if (
+    romanMarathi.some(
+      word => value.includes(word)
+    )
+  ) {
+    return 'mr';
+  }
+
+  return 'en';
 }
 
-
 // ============================================================
-// ADD CHAT BUBBLE
+// UPDATE UI LANGUAGE
 // ============================================================
 
-function addMessage(text, type, language = null, emergency = false) {
+function updateInterfaceLanguage() {
 
-    const bubble = document.createElement("div");
+  if (!language) {
+    return;
+  }
 
-    bubble.classList.add("bubble");
+  const text =
+    uiText[language];
 
-    if (type === "user") {
-        bubble.classList.add("user");
-    } else {
-        bubble.classList.add("bot");
-    }
+  input.placeholder =
+    text.placeholder;
 
-    if (emergency) {
-        bubble.classList.add("emergency");
-    }
+  status.textContent =
+    text.online;
 
-
-    // Message text
-    const messageText = document.createElement("div");
-
-    messageText.textContent = text;
-
-    bubble.appendChild(messageText);
-
-
-    // Bot metadata
-    if (type === "bot") {
-
-        const meta = document.createElement("div");
-
-        meta.classList.add("meta");
-
-        let languageName = "English";
-
-        if (language === "hi") {
-            languageName = "Hindi";
-        }
-
-        if (language === "mr") {
-            languageName = "Marathi";
-        }
-
-        meta.textContent =
-            languageName + " • M2 connected";
-
-        bubble.appendChild(meta);
-    }
-
-
-    messages.appendChild(bubble);
-
-    messages.scrollTop = messages.scrollHeight;
-
-    return bubble;
+  footerText.textContent =
+    text.footer;
 }
 
-
 // ============================================================
-// WELCOME MESSAGE
+// WELCOME
 // ============================================================
 
 function showWelcome() {
 
-    messages.innerHTML = "";
-
-    addMessage(
-        "Welcome to JeevanSetu AI.\nAsk your health question in English, Hindi, or Marathi.",
-        "bot",
-        null
-    );
+  addBubble(
+    'Welcome to JeevanSetu AI.\n' +
+    'Ask your health question in English, Hindi, or Marathi.'
+  );
 }
-
 
 // ============================================================
 // TYPING INDICATOR
@@ -189,428 +442,721 @@ function showWelcome() {
 
 function showTyping() {
 
-    const typing = document.createElement("div");
+  const node =
+    document.createElement('div');
 
-    typing.id = "typingIndicator";
+  node.className =
+    'bubble bot typing';
 
-    typing.classList.add("typing");
+  node.textContent =
+    language
+      ? uiText[language].typing
+      : 'JeevanSetu AI is typing…';
 
-    typing.textContent = "JeevanSetu is typing...";
+  messages.append(node);
 
-    messages.appendChild(typing);
+  messages.scrollTop =
+    messages.scrollHeight;
 
-    messages.scrollTop = messages.scrollHeight;
+  return node;
 }
 
+// ============================================================
+// RESET
+// ============================================================
 
-function hideTyping() {
+function resetChat() {
 
-    const typing =
-        document.getElementById("typingIndicator");
+  language = null;
 
-    if (typing) {
-        typing.remove();
-    }
+  voiceMessageReady = false;
+
+  messages.replaceChildren();
+
+  input.value = '';
+
+  input.placeholder =
+    'Type a health question';
+
+  status.textContent =
+    'Health assistant • online';
+
+  footerText.textContent =
+    uiText.en.footer;
+
+  voiceLanguageSelect.value =
+    'auto';
+
+  showWelcome();
+
+  input.focus();
 }
 
+// ============================================================
+// TEXT TO SPEECH
+// ============================================================
+
+function speakReply(
+  text,
+  replyLanguage
+) {
+
+  if (
+    !('speechSynthesis' in window)
+  ) {
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const utterance =
+    new SpeechSynthesisUtterance(
+      text
+    );
+
+  const targetLanguage =
+    {
+      en: 'en-IN',
+      hi: 'hi-IN',
+      mr: 'mr-IN'
+    }[replyLanguage] || 'en-IN';
+
+  utterance.lang =
+    targetLanguage;
+
+  const voices =
+    window.speechSynthesis
+      .getVoices();
+
+  // Prefer exact Indian language voice
+  let matchingVoice =
+    voices.find(
+      voice =>
+        voice.lang.toLowerCase() ===
+        targetLanguage.toLowerCase()
+    );
+
+  // Otherwise find language family
+  if (!matchingVoice) {
+    matchingVoice =
+      voices.find(
+        voice =>
+          voice.lang
+            .toLowerCase()
+            .startsWith(
+              targetLanguage
+                .slice(0, 2)
+                .toLowerCase()
+            )
+      );
+  }
+
+  if (matchingVoice) {
+    utterance.voice =
+      matchingVoice;
+  }
+
+  utterance.rate =
+    0.95;
+
+  utterance.pitch =
+    1;
+
+  window.speechSynthesis.speak(
+    utterance
+  );
+}
 
 // ============================================================
 // SEND MESSAGE TO M2
 // ============================================================
 
-async function sendMessage(text) {
+async function sendMessage(
+  message,
+  shouldSpeakReply = false
+) {
 
-    text = text.trim();
+  message =
+    message.trim();
 
-    if (!text) {
-        return;
-    }
+  if (!message) {
+    return;
+  }
 
+  // Detect language from actual text
+  language =
+    detectLanguage(message);
 
-    // Detect language BEFORE sending
-    const language = detectLanguage(text);
+  updateInterfaceLanguage();
 
-    console.log("Message:", text);
-    console.log("Detected language:", language);
+  const selectedLanguage =
+    uiText[language];
 
+  addBubble(
+    message,
+    'user'
+  );
 
-    // Show user bubble
-    addMessage(
-        text,
-        "user"
-    );
+  input.value = '';
 
+  input.disabled = true;
 
-    // Clear input
-    messageInput.value = "";
+  status.textContent =
+    selectedLanguage.processing;
 
-
-    // Show typing
+  const typing =
     showTyping();
 
+  try {
 
-    try {
+    const response =
+      await fetch(
+        API_URL,
+        {
+          method: 'POST',
 
-        const response = await fetch(API_URL, {
+          headers: {
+            'Content-Type':
+              'application/json',
+            'Accept':
+              'application/json'
+          },
 
-            method: "POST",
+          body:
+            JSON.stringify({
+              session_id:
+                sessionId,
 
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
+              message:
+                message,
 
-            body: JSON.stringify({
+              language:
+                language,
 
-                session_id: sessionId,
-
-                message: text,
-
-                language: language,
-
-                channel: "web"
+              channel:
+                'web'
             })
-        });
+        }
+      );
 
+    if (!response.ok) {
 
-        hideTyping();
+      let errorMessage =
+        `Server error: ${response.status}`;
 
+      try {
 
-        // HTTP error
-        if (!response.ok) {
+        const errorData =
+          await response.json();
 
-            console.error(
-                "M2 HTTP error:",
-                response.status
-            );
+        if (errorData.detail) {
 
-            addMessage(
-                "Sorry, I am unable to generate a response right now. Please try again in a moment.",
-                "bot",
-                language
-            );
-
-            return;
+          errorMessage =
+            typeof errorData.detail ===
+            'string'
+              ? errorData.detail
+              : JSON.stringify(
+                  errorData.detail
+                );
         }
 
+      } catch (_) {}
 
-        const data = await response.json();
-
-        console.log("M2 response:", data);
-
-
-        // Update session if backend returns one
-        if (data.session_id) {
-
-            sessionId = data.session_id;
-
-            localStorage.setItem(
-                "jeevansetu_session_id",
-                sessionId
-            );
-        }
-
-
-        // Get backend response
-        const reply =
-            data.reply ||
-            data.response ||
-            data.message ||
-            "Sorry, I could not generate a response.";
-
-
-        // Add response
-        addMessage(
-            reply,
-            "bot",
-            data.language || language,
-            data.is_emergency === true
-        );
-
-
-    } catch (error) {
-
-        hideTyping();
-
-        console.error(
-            "M2 connection error:",
-            error
-        );
-
-
-        addMessage(
-            "Could not contact the chat service. Please try again later.",
-            "bot",
-            language
-        );
+      throw new Error(
+        errorMessage
+      );
     }
-}
 
+    const data =
+      await response.json();
+
+    typing.remove();
+
+    // M2 response:
+    //
+    // {
+    //   reply,
+    //   session_id,
+    //   language,
+    //   is_emergency
+    // }
+
+    const replyLanguage =
+      ['en', 'hi', 'mr'].includes(
+        data.language
+      )
+        ? data.language
+        : language;
+
+    language =
+      replyLanguage;
+
+    updateInterfaceLanguage();
+
+    const bubbleType =
+      data.is_emergency
+        ? 'bot emergency'
+        : 'bot';
+
+    const emergencyText =
+      data.is_emergency
+        ? ' • emergency'
+        : '';
+
+    addBubble(
+      data.reply,
+      bubbleType,
+      `${replyLanguage} • M2 connected${emergencyText}`
+    );
+
+    // Speak answer in same language
+    if (shouldSpeakReply) {
+
+      speakReply(
+        data.reply,
+        replyLanguage
+      );
+    }
+
+  } catch (error) {
+
+    console.error(
+      'M2 backend connection error:',
+      error
+    );
+
+    typing.remove();
+
+    addBubble(
+      `${selectedLanguage.cannotContact}\n\nError: ${error.message}`,
+      'bot emergency'
+    );
+
+  } finally {
+
+    input.disabled =
+      false;
+
+    status.textContent =
+      uiText[
+        language || 'en'
+      ].online;
+
+    input.focus();
+  }
+}
 
 // ============================================================
 // FORM SUBMIT
 // ============================================================
 
-composer.addEventListener(
-    "submit",
-    function (event) {
+form.addEventListener(
+  'submit',
+  event => {
 
-        event.preventDefault();
+    event.preventDefault();
 
-        const text =
-            messageInput.value.trim();
+    const shouldSpeakReply =
+      voiceMessageReady;
 
-        if (text) {
-            sendMessage(text);
-        }
-    }
+    voiceMessageReady =
+      false;
+
+    sendMessage(
+      input.value,
+      shouldSpeakReply
+    );
+  }
 );
 
+// ============================================================
+// NORMAL TEXT INPUT
+// ============================================================
+
+input.addEventListener(
+  'input',
+  () => {
+
+    voiceMessageReady =
+      false;
+  }
+);
 
 // ============================================================
-// RESET CHAT
+// RESET BUTTON
 // ============================================================
 
 resetButton.addEventListener(
-    "click",
-    function () {
-
-        sessionId =
-            "web-" +
-            Date.now() +
-            "-" +
-            Math.random().toString(36).substring(2, 10);
-
-        localStorage.setItem(
-            "jeevansetu_session_id",
-            sessionId
-        );
-
-        showWelcome();
-
-        messageInput.focus();
-    }
+  'click',
+  resetChat
 );
 
-
 // ============================================================
-// VOICE RECOGNITION
+// SPEECH RECOGNITION
 // ============================================================
 
 const SpeechRecognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
 
+if (!SpeechRecognition) {
 
-let recognition = null;
+  voiceButton.disabled =
+    true;
 
-let isListening = false;
-
-
-// Voice language.
-// Click microphone again after stopping to cycle.
-const voiceLanguages = [
-    {
-        code: "en-IN",
-        name: "English"
-    },
-    {
-        code: "hi-IN",
-        name: "Hindi"
-    },
-    {
-        code: "mr-IN",
-        name: "Marathi"
-    }
-];
-
-let voiceLanguageIndex = 0;
-
-
-if (SpeechRecognition) {
-
-    recognition = new SpeechRecognition();
-
-    recognition.continuous = false;
-
-    recognition.interimResults = false;
-
-
-    recognition.onstart = function () {
-
-        isListening = true;
-
-        voiceButton.classList.add("listening");
-
-        voiceButton.textContent = "⏹";
-
-
-        if (statusText) {
-
-            statusText.textContent =
-                "Listening in " +
-                voiceLanguages[voiceLanguageIndex].name +
-                "...";
-        }
-    };
-
-
-    recognition.onresult = function (event) {
-
-        const transcript =
-            event.results[0][0].transcript;
-
-        console.log(
-            "Voice transcript:",
-            transcript
-        );
-
-
-        messageInput.value = transcript;
-
-
-        // Automatically detect the resulting text
-        const detected =
-            detectLanguage(transcript);
-
-        console.log(
-            "Detected language:",
-            detected
-        );
-    };
-
-
-    recognition.onerror = function (event) {
-
-        console.error(
-            "Speech recognition error:",
-            event.error
-        );
-
-
-        if (statusText) {
-
-            statusText.textContent =
-                "Health assistant • online";
-        }
-    };
-
-
-    recognition.onend = function () {
-
-        isListening = false;
-
-        voiceButton.classList.remove("listening");
-
-        voiceButton.textContent = "🎙";
-
-
-        if (statusText) {
-
-            statusText.textContent =
-                "Health assistant • online";
-        }
-    };
-
-
-    voiceButton.addEventListener(
-        "click",
-        function () {
-
-            // Stop if already listening
-            if (isListening) {
-
-                recognition.stop();
-
-                return;
-            }
-
-
-            // Select language
-            recognition.lang =
-                voiceLanguages[voiceLanguageIndex].code;
-
-
-            console.log(
-                "Voice language:",
-                recognition.lang
-            );
-
-
-            try {
-
-                recognition.start();
-
-            } catch (error) {
-
-                console.error(
-                    "Could not start microphone:",
-                    error
-                );
-            }
-        }
-    );
-
-
-    // Right-click microphone to change voice language
-    voiceButton.addEventListener(
-        "contextmenu",
-        function (event) {
-
-            event.preventDefault();
-
-            voiceLanguageIndex++;
-
-            if (
-                voiceLanguageIndex >=
-                voiceLanguages.length
-            ) {
-                voiceLanguageIndex = 0;
-            }
-
-
-            const selected =
-                voiceLanguages[voiceLanguageIndex];
-
-
-            voiceButton.title =
-                "Voice: " +
-                selected.name;
-
-
-            if (statusText) {
-
-                statusText.textContent =
-                    "Voice language: " +
-                    selected.name;
-            }
-
-
-            console.log(
-                "Voice language changed to:",
-                selected.name
-            );
-        }
-    );
-
+  voiceButton.title =
+    'Voice input is not supported in this browser. Use Chrome or Edge.';
 
 } else {
 
-    voiceButton.disabled = true;
+  const recognition =
+    new SpeechRecognition();
 
-    voiceButton.title =
-        "Voice recognition is not supported by this browser";
+  // We want partial speech results
+  recognition.interimResults =
+    true;
 
-    console.warn(
-        "Speech Recognition is not supported."
-    );
+  // More alternatives improves recognition quality
+  recognition.maxAlternatives =
+    5;
+
+  // Do not continuously listen forever
+  recognition.continuous =
+    false;
+
+  // ----------------------------------------------------------
+  // Select recognition language
+  // ----------------------------------------------------------
+
+  function getSpeechLanguage() {
+
+    const selected =
+      voiceLanguageSelect.value;
+
+    if (selected === 'en') {
+      return 'en-IN';
+    }
+
+    if (selected === 'hi') {
+      return 'hi-IN';
+    }
+
+    if (selected === 'mr') {
+      return 'mr-IN';
+    }
+
+    // AUTO MODE
+    //
+    // Use already detected conversation language.
+    if (language === 'hi') {
+      return 'hi-IN';
+    }
+
+    if (language === 'mr') {
+      return 'mr-IN';
+    }
+
+    if (language === 'en') {
+      return 'en-IN';
+    }
+
+    // Use browser language if available.
+    const browserLanguage =
+      (
+        navigator.language ||
+        'en-IN'
+      ).toLowerCase();
+
+    if (
+      browserLanguage.startsWith('mr')
+    ) {
+      return 'mr-IN';
+    }
+
+    if (
+      browserLanguage.startsWith('hi')
+    ) {
+      return 'hi-IN';
+    }
+
+    return 'en-IN';
+  }
+
+  // ----------------------------------------------------------
+  // Microphone click
+  // ----------------------------------------------------------
+
+  voiceButton.addEventListener(
+    'click',
+    () => {
+
+      if (isListening) {
+
+        recognition.stop();
+
+        return;
+      }
+
+      voiceMessageReady =
+        false;
+
+      input.value = '';
+
+      const speechLanguage =
+        getSpeechLanguage();
+
+      recognition.lang =
+        speechLanguage;
+
+      console.log(
+        'Speech recognition language:',
+        speechLanguage
+      );
+
+      try {
+
+        recognition.start();
+
+      } catch (error) {
+
+        console.log(
+          'Recognition already running:',
+          error
+        );
+      }
+    }
+  );
+
+  // ----------------------------------------------------------
+  // Started listening
+  // ----------------------------------------------------------
+
+  recognition.onstart =
+    () => {
+
+      isListening =
+        true;
+
+      voiceButton.classList.add(
+        'listening'
+      );
+
+      voiceButton.textContent =
+        '🔴';
+
+      const currentLanguage =
+        voiceLanguageSelect.value ===
+        'auto'
+          ? language || 'en'
+          : voiceLanguageSelect.value;
+
+      status.textContent =
+        uiText[
+          currentLanguage
+        ].listening;
+    };
+
+  // ----------------------------------------------------------
+  // Recognition result
+  // ----------------------------------------------------------
+
+  recognition.onresult =
+    event => {
+
+      let transcript = '';
+
+      // Combine all final/interim results
+      for (
+        let i = event.resultIndex;
+        i < event.results.length;
+        i++
+      ) {
+
+        transcript +=
+          event.results[i][0]
+            .transcript;
+      }
+
+      transcript =
+        transcript.trim();
+
+      if (!transcript) {
+        return;
+      }
+
+      // Show recognized speech inside input
+      // before sending it.
+      input.value =
+        transcript;
+
+      // Detect actual language
+      // from recognized transcript.
+      const detected =
+        detectLanguage(
+          transcript
+        );
+
+      language =
+        detected;
+
+      updateInterfaceLanguage();
+
+      console.log(
+        'Recognized speech:',
+        transcript
+      );
+
+      console.log(
+        'Detected language:',
+        detected
+      );
+
+      // Only send once final result arrives
+      const lastResult =
+        event.results[
+          event.results.length - 1
+        ];
+
+      if (
+        lastResult.isFinal
+      ) {
+
+        voiceMessageReady =
+          true;
+
+        sendMessage(
+          transcript,
+          true
+        );
+      }
+    };
+
+  // ----------------------------------------------------------
+  // Error handling
+  // ----------------------------------------------------------
+
+  recognition.onerror =
+    event => {
+
+      console.error(
+        'Speech recognition error:',
+        event.error
+      );
+
+      isListening =
+        false;
+
+      voiceButton.classList.remove(
+        'listening'
+      );
+
+      voiceButton.textContent =
+        '🎙';
+
+      let currentLanguage =
+        language || 'en';
+
+      // Permission error
+      if (
+        event.error ===
+        'not-allowed'
+      ) {
+
+        addBubble(
+          'Microphone permission was denied. Please allow microphone access for this website and try again.',
+          'bot emergency'
+        );
+
+        return;
+      }
+
+      // No speech
+      if (
+        event.error ===
+        'no-speech'
+      ) {
+
+        addBubble(
+          `${uiText[currentLanguage].voiceError}: No speech detected. Please speak clearly and try again.`,
+          'bot'
+        );
+
+        return;
+      }
+
+      // Network error
+      if (
+        event.error ===
+        'network'
+      ) {
+
+        addBubble(
+          `${uiText[currentLanguage].voiceError}: Browser speech recognition network error. Please check your internet connection.`,
+          'bot emergency'
+        );
+
+        return;
+      }
+
+      // Other errors
+      if (
+        event.error !==
+        'aborted'
+      ) {
+
+        addBubble(
+          `${uiText[currentLanguage].voiceError}: ${event.error}. ${uiText[currentLanguage].tryAgain}`,
+          'bot'
+        );
+      }
+    };
+
+  // ----------------------------------------------------------
+  // Recognition ended
+  // ----------------------------------------------------------
+
+  recognition.onend =
+    () => {
+
+      isListening =
+        false;
+
+      voiceButton.classList.remove(
+        'listening'
+      );
+
+      voiceButton.textContent =
+        '🎙';
+
+      if (!voiceMessageReady) {
+
+        status.textContent =
+          uiText[
+            language || 'en'
+          ].online;
+      }
+    };
 }
 
+// ============================================================
+// SPEECH SYNTHESIS VOICE LOADING
+// ============================================================
+
+if (
+  'speechSynthesis' in window
+) {
+
+  window.speechSynthesis.onvoiceschanged =
+    () => {
+
+      // Force browser to load available voices.
+      window.speechSynthesis
+        .getVoices();
+    };
+}
 
 // ============================================================
 // START CHAT
 // ============================================================
 
 showWelcome();
-
-messageInput.focus();

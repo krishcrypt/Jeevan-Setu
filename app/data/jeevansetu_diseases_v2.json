@@ -1,0 +1,603 @@
+[
+  {
+    "name": "Dengue",
+    "description": "A viral infection transmitted mainly through the bite of infected Aedes mosquitoes.",
+    "common_symptoms": [
+      "High fever",
+      "Severe headache",
+      "Pain behind the eyes",
+      "Muscle and joint pain",
+      "Nausea or vomiting",
+      "Skin rash"
+    ],
+    "warning_signs": [
+      "Severe abdominal pain",
+      "Persistent vomiting",
+      "Rapid breathing",
+      "Bleeding from the gums or nose",
+      "Blood in vomit or stool",
+      "Extreme weakness, restlessness, or pale/cold skin"
+    ],
+    "prevention": [
+      "Avoid mosquito bites, especially during the daytime.",
+      "Use mosquito repellent and protective clothing.",
+      "Remove stagnant water where mosquitoes can breed."
+    ],
+    "when_to_seek_medical_care": "Seek medical care immediately if warning signs of severe dengue occur.",
+    "source": {
+      "name": "WHO — Dengue",
+      "url": "https://www.who.int/en/news-room/fact-sheets/detail/dengue-and-severe-dengue"
+    },
+    "id": "dengue",
+    "category": [
+      "vector_borne",
+      "viral_infection"
+    ],
+    "higher_risk_groups": [],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Malaria",
+    "description": "A potentially life-threatening disease caused by parasites transmitted through infected mosquitoes.",
+    "common_symptoms": [
+      "Fever",
+      "Headache",
+      "Chills"
+    ],
+    "warning_signs": [
+      "Severe weakness",
+      "Difficulty breathing",
+      "Confusion or altered consciousness",
+      "Severe anaemia",
+      "Signs of organ failure"
+    ],
+    "prevention": [
+      "Use insecticide-treated mosquito nets where appropriate.",
+      "Use mosquito repellents.",
+      "Reduce exposure to mosquito bites.",
+      "Follow local malaria-control recommendations."
+    ],
+    "when_to_seek_medical_care": "Anyone with suspected malaria should seek medical evaluation promptly because some forms can become severe quickly.",
+    "source": {
+      "name": "WHO — Malaria",
+      "url": "https://www.who.int/en/news-room/fact-sheets/detail/malaria"
+    },
+    "id": "malaria",
+    "category": [
+      "vector_borne",
+      "parasitic_infection"
+    ],
+    "higher_risk_groups": [
+      "Children under 5 years",
+      "Pregnant women and girls",
+      "People with HIV/AIDS",
+      "Travellers to malaria-risk areas"
+    ],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Tuberculosis (TB)",
+    "description": "An infectious bacterial disease caused by Mycobacterium tuberculosis. It most commonly affects the lungs and can spread from person to person.",
+    "common_symptoms": [
+      "Prolonged cough",
+      "Chest pain",
+      "Weakness or fatigue",
+      "Unexplained weight loss",
+      "Fever",
+      "Night sweats"
+    ],
+    "warning_signs": [
+      "Persistent or worsening cough",
+      "Coughing blood",
+      "Difficulty breathing",
+      "Significant unexplained weight loss"
+    ],
+    "prevention": [
+      "Seek medical attention for prolonged cough or other TB symptoms.",
+      "People at increased risk should follow recommended screening.",
+      "People with TB should follow infection-control guidance such as covering their mouth when coughing and maintaining good ventilation."
+    ],
+    "when_to_seek_medical_care": "A prolonged cough, fever, weight loss, or other suspected TB symptoms should be evaluated by a healthcare professional.",
+    "source": {
+      "name": "WHO — Tuberculosis (TB)",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/tuberculosis"
+    },
+    "id": "tuberculosis_tb",
+    "category": [
+      "infectious_disease",
+      "respiratory",
+      "bacterial_infection"
+    ],
+    "higher_risk_groups": [
+      "Babies and children if infected",
+      "People with diabetes",
+      "People with weakened immune systems, including people living with HIV",
+      "People affected by undernutrition",
+      "People who use tobacco"
+    ],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Measles",
+    "description": "A highly infectious viral disease that spreads mainly through the respiratory route.",
+    "common_symptoms": [
+      "High fever",
+      "Skin rash",
+      "Cough",
+      "Runny nose",
+      "Red eyes"
+    ],
+    "warning_signs": [
+      "Difficulty breathing",
+      "Severe weakness",
+      "Altered consciousness",
+      "Seizures"
+    ],
+    "prevention": [
+      "Vaccination is the most effective way to prevent measles.",
+      "Follow the recommended childhood immunization schedule."
+    ],
+    "when_to_seek_medical_care": "Seek medical advice if measles is suspected, particularly when a child has fever and a widespread rash.",
+    "source": {
+      "name": "WHO — Measles",
+      "url": "https://www.who.int/en/news-room/fact-sheets/detail/measles"
+    },
+    "id": "measles",
+    "category": [
+      "vaccine_preventable",
+      "viral_infection",
+      "respiratory"
+    ],
+    "higher_risk_groups": [
+      "Unvaccinated or under-vaccinated children",
+      "Children under 5 years"
+    ],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Chikungunya",
+    "description": "A viral disease transmitted mainly by infected Aedes mosquitoes.",
+    "common_symptoms": [
+      "Fever",
+      "Severe joint pain",
+      "Joint swelling",
+      "Muscle pain",
+      "Headache",
+      "Fatigue",
+      "Rash",
+      "Nausea"
+    ],
+    "warning_signs": [
+      "Severe or persistent symptoms"
+    ],
+    "prevention": [
+      "Avoid mosquito bites.",
+      "Use mosquito repellent.",
+      "Wear protective clothing.",
+      "Remove stagnant water around homes."
+    ],
+    "when_to_seek_medical_care": "Seek medical advice for severe or persistent symptoms or if the person belongs to a higher-risk group.",
+    "source": {
+      "name": "WHO — Chikungunya",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/chikungunya"
+    },
+    "id": "chikungunya",
+    "category": [
+      "vector_borne",
+      "viral_infection"
+    ],
+    "higher_risk_groups": [
+      "Newborns",
+      "Older adults",
+      "People with underlying health conditions"
+    ],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Typhoid Fever",
+    "description": "A bacterial infection caused by Salmonella Typhi. It spreads mainly through contaminated food and water.",
+    "common_symptoms": [
+      "Prolonged high fever",
+      "Fatigue",
+      "Headache",
+      "Nausea",
+      "Abdominal pain",
+      "Constipation or diarrhoea",
+      "Sometimes a rash"
+    ],
+    "warning_signs": [
+      "Severe illness",
+      "Severe abdominal symptoms",
+      "Signs of serious complications"
+    ],
+    "prevention": [
+      "Drink safe water.",
+      "Maintain good sanitation and hygiene.",
+      "Wash hands with soap and water.",
+      "Practice safe food handling.",
+      "Follow recommended typhoid vaccination guidance."
+    ],
+    "when_to_seek_medical_care": "Persistent high fever or suspected typhoid should be evaluated by a healthcare professional.",
+    "source": {
+      "name": "WHO — Typhoid Fever",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/typhoid"
+    },
+    "id": "typhoid_fever",
+    "category": [
+      "food_waterborne",
+      "bacterial_infection",
+      "infectious_disease"
+    ],
+    "higher_risk_groups": [],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Cholera",
+    "description": "A bacterial infection that can cause severe diarrhoea and vomiting. It is commonly associated with contaminated food or water.",
+    "common_symptoms": [
+      "Large amounts of watery diarrhoea",
+      "Vomiting",
+      "Leg cramps",
+      "Weakness"
+    ],
+    "warning_signs": [
+      "Severe dehydration",
+      "Extreme weakness",
+      "Sunken eyes",
+      "Reduced skin elasticity",
+      "Severe diarrhoea or vomiting"
+    ],
+    "prevention": [
+      "Drink safe water.",
+      "Use proper sanitation.",
+      "Wash hands regularly.",
+      "Practice safe food hygiene."
+    ],
+    "when_to_seek_medical_care": "Severe diarrhoea or signs of dehydration require urgent medical attention.",
+    "source": {
+      "name": "WHO — Cholera",
+      "url": "https://www.who.int/en/news-room/fact-sheets/detail/cholera"
+    },
+    "id": "cholera",
+    "category": [
+      "food_waterborne",
+      "bacterial_infection",
+      "outbreak_prone"
+    ],
+    "higher_risk_groups": [],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Rabies",
+    "description": "A viral disease that can be transmitted through the saliva of infected animals, commonly through bites or scratches.",
+    "common_symptoms": [
+      "Fever",
+      "Weakness",
+      "Abnormal sensations or pain around a wound",
+      "Progressive neurological symptoms",
+      "Difficulty swallowing",
+      "Hydrophobia (fear of water)"
+    ],
+    "warning_signs": [
+      "Difficulty swallowing",
+      "Progressive neurological symptoms",
+      "Altered consciousness",
+      "Seizures"
+    ],
+    "prevention": [
+      "Avoid contact with unfamiliar or potentially rabid animals.",
+      "Vaccinate dogs and other animals according to veterinary/public-health recommendations.",
+      "Wash bite or scratch wounds thoroughly with soap and water.",
+      "Seek medical care immediately after a potentially risky exposure."
+    ],
+    "when_to_seek_medical_care": "Any potentially rabies-exposing bite or scratch should be assessed urgently by a healthcare professional.",
+    "source": {
+      "name": "WHO — Rabies",
+      "url": "https://www.who.int/en/news-room/fact-sheets/detail/rabies"
+    },
+    "id": "rabies",
+    "category": [
+      "zoonotic",
+      "viral_infection",
+      "vaccine_preventable",
+      "emergency_exposure"
+    ],
+    "higher_risk_groups": [
+      "Children are frequent victims of dog-mediated rabies exposure",
+      "People with occupational or personal activities involving potentially infected animals"
+    ],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Seasonal Influenza (Flu)",
+    "description": "An acute respiratory infection caused by influenza viruses.",
+    "common_symptoms": [
+      "Sudden fever",
+      "Cough",
+      "Sore throat",
+      "Headache",
+      "Muscle and joint pain",
+      "Fatigue",
+      "Runny nose"
+    ],
+    "warning_signs": [
+      "Difficulty breathing",
+      "Severe or worsening symptoms",
+      "Severe illness in a high-risk person"
+    ],
+    "prevention": [
+      "Seasonal influenza vaccination is the best way to reduce the risk of illness and severe disease.",
+      "Practice good respiratory hygiene.",
+      "Wash hands regularly.",
+      "Avoid close contact with people who are sick when possible."
+    ],
+    "when_to_seek_medical_care": "Seek medical care for severe symptoms or if a person at higher risk develops significant illness.",
+    "source": {
+      "name": "WHO — Seasonal Influenza (Flu)",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/influenza-%28seasonal%29"
+    },
+    "id": "seasonal_influenza_flu",
+    "category": [
+      "respiratory",
+      "viral_infection",
+      "vaccine_preventable"
+    ],
+    "higher_risk_groups": [
+      "Pregnant women",
+      "Children under 5 years",
+      "Older adults",
+      "People with chronic medical conditions",
+      "People with immunosuppressive conditions or treatments"
+    ],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Pneumonia",
+    "description": "An acute respiratory infection that can be caused by viruses or bacteria. It can range from mild to life-threatening.",
+    "common_symptoms": [
+      "Cough",
+      "Fever",
+      "Shortness of breath",
+      "Chest pain",
+      "Fatigue",
+      "Chills",
+      "Sometimes nausea, vomiting, or diarrhoea"
+    ],
+    "warning_signs": [
+      "Difficulty breathing",
+      "Severe shortness of breath",
+      "Confusion, especially in older adults",
+      "Severe illness in young children or other high-risk people"
+    ],
+    "prevention": [
+      "Follow recommended vaccinations.",
+      "Wash hands regularly.",
+      "Reduce indoor air pollution.",
+      "Avoid smoking."
+    ],
+    "when_to_seek_medical_care": "Difficulty breathing or severe symptoms require prompt medical evaluation.",
+    "source": {
+      "name": "WHO — Pneumonia",
+      "url": "https://www.who.int/en/news-room/fact-sheets/detail/pneumonia"
+    },
+    "id": "pneumonia",
+    "category": [
+      "respiratory",
+      "infectious_disease"
+    ],
+    "higher_risk_groups": [
+      "Children under 5 years",
+      "Older adults",
+      "People with weakened immune systems or certain chronic conditions"
+    ],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Hepatitis B",
+    "description": "A viral infection that affects the liver and can cause both short-term and long-term infection.",
+    "common_symptoms": [
+      "Some people have no symptoms.",
+      "Fatigue",
+      "Fever",
+      "Nausea",
+      "Abdominal discomfort",
+      "Dark urine",
+      "Yellowing of the skin or eyes (jaundice)"
+    ],
+    "warning_signs": [
+      "Severe jaundice",
+      "Severe illness",
+      "Symptoms suggesting serious liver problems"
+    ],
+    "prevention": [
+      "Hepatitis B vaccination is an effective method of prevention.",
+      "Avoid contact with infected blood or bodily fluids.",
+      "Use safe medical and injection practices."
+    ],
+    "when_to_seek_medical_care": "Persistent symptoms or possible exposure should be discussed with a healthcare professional.",
+    "source": {
+      "name": "WHO — Hepatitis B",
+      "url": "https://www.who.int/news-room/fact-sheets/detail/hepatitis-b"
+    },
+    "id": "hepatitis_b",
+    "category": [
+      "viral_hepatitis",
+      "viral_infection",
+      "vaccine_preventable"
+    ],
+    "higher_risk_groups": [],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  },
+  {
+    "name": "Japanese Encephalitis",
+    "description": "A viral disease transmitted mainly through infected mosquitoes. It can cause inflammation of the brain.",
+    "common_symptoms": [
+      "Fever",
+      "Headache",
+      "Vomiting",
+      "Confusion or altered mental state",
+      "Neurological symptoms",
+      "Seizures in severe cases"
+    ],
+    "warning_signs": [
+      "Confusion",
+      "Seizures",
+      "Severe neurological symptoms",
+      "Altered consciousness"
+    ],
+    "prevention": [
+      "Vaccination is an important prevention method in areas where Japanese encephalitis vaccination is recommended.",
+      "Reduce mosquito exposure.",
+      "Use mosquito nets and repellents where appropriate."
+    ],
+    "when_to_seek_medical_care": "Fever accompanied by confusion, seizures, severe neurological symptoms, or altered consciousness requires urgent medical attention.",
+    "source": {
+      "name": "WHO — Japanese Encephalitis",
+      "url": "https://www.who.int/en/news-room/fact-sheets/detail/japanese-encephalitis"
+    },
+    "id": "japanese_encephalitis",
+    "category": [
+      "vector_borne",
+      "viral_infection",
+      "vaccine_preventable",
+      "neurological_infection"
+    ],
+    "higher_risk_groups": [
+      "Children, particularly those under 15 years",
+      "People living in or travelling to areas with endemic transmission"
+    ],
+    "important_notes": [],
+    "critical_safety_notes": [
+      "Do not diagnose the disease from symptoms alone.",
+      "Do not provide individualized medication or dosing instructions.",
+      "Escalate severe or emergency symptoms to professional medical care."
+    ],
+    "response_restrictions": [
+      "Do not state that the user has this disease based only on symptoms.",
+      "Do not prescribe medication or dosing.",
+      "Use prevention and care-seeking guidance and cite the source."
+    ],
+    "last_verified": "2026-08-11"
+  }
+]

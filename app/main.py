@@ -14,7 +14,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import api_router
 from app.core.config import get_settings
 from app.db.mongodb import close_mongo_connection, connect_to_mongo
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
+from app.security.rate_limit import limiter
 settings = get_settings()
 
 
@@ -33,6 +37,13 @@ app = FastAPI(
     description="Backend API for JeevanSetu AI, a public health chatbot (SIH project).",
     lifespan=lifespan,
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(
+    RateLimitExceeded,
+ _rate_limit_exceeded_handler,
+)
+app.add_middleware(SlowAPIMiddleware)
 
 # CORS - open for hackathon/demo purposes; tighten before production.
 app.add_middleware(

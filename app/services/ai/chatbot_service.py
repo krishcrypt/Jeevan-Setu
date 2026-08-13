@@ -24,6 +24,7 @@ from google import genai
 from google.genai import types
 
 from app.core.config import get_settings
+from app.services.ai.rag_service import find_disease, create_context
 
 logger = logging.getLogger(__name__)
 settings = get_settings()
@@ -88,30 +89,72 @@ def _build_system_prompt(language: str) -> str:
     )
     return f"{BASE_SYSTEM_PROMPT}\n\n{language_instruction}"
 
-
-def get_ai_response(message: str, language: str = DEFAULT_LANGUAGE, session_id: str | None = None) -> str:
+def get_ai_response(
+    message: str,
+    language: str = DEFAULT_LANGUAGE,
+    session_id: str | None = None,
+) -> str:
     """
-    Send the user's message to Gemini and return its reply text, in the
-    requested language.
-
-    `language` should already be normalized to one of "en" | "hi" | "mr"
-    (app.schemas.chat.ChatRequest does this before it ever reaches here);
-    any unrecognized value safely falls back to English.
-
-    Raises RuntimeError / google.genai errors on failure - the /chat
-    endpoint catches these and falls back to a safe message.
+    Send the user's message to Gemini and return its reply text,
+    using relevant healthcare information from the RAG system.
     """
+    # Step 0: Check for emergency situations before calling Gemini
+    if detect_emergency(message):
+        emergency_responses = {
+            "en": (
+                "This may be a medical emergency. "
+                "Please seek immediate medical attention or contact your local emergency services."
+            ),
+            "hi": (
+                "यह एक चिकित्सीय आपातकाल हो सकता है। "
+                "कृपया तुरंत चिकित्सा सहायता लें या स्थानीय आपातकालीन सेवाओं से संपर्क करें।"
+            ),
+            "mr": (
+                "ही वैद्यकीय आपत्कालीन परिस्थिती असू शकते. "
+                "कृपया त्वरित वैद्यकीय मदत घ्या किंवा स्थानिक आपत्कालीन सेवांशी संपर्क साधा."
+            ),
+        }
+
+        return emergency_responses.get(
+            language,
+            emergency_responses["en"]
+        )
     client = _get_client()
     system_prompt = _build_system_prompt(language)
+
+    # Step 1: Retrieve relevant healthcare information from M4 data
+    disease = find_disease(message)
+
+    # Step 2: Convert the retrieved data into clean context
+    if disease:
+        context = create_context(disease)
+    else:
+        context = None
+
+    # Step 3: Give the user's question + healthcare context to Gemini
     response = client.models.generate_content(
         model=settings.AI_MODEL_NAME,
-        contents=message,
+        contents=f"""
+User question:
+{message}
+
+Relevant healthcare information from the JeevanSetu knowledge base:
+{context if context else "No specific information was found in the knowledge base."}
+
+Instructions:
+- Use the healthcare information above when answering.
+- Do not invent medical facts that contradict the provided information.
+- Do not diagnose the user.
+- If the information is not available in the knowledge base, clearly say that.
+""",
         config=types.GenerateContentConfig(
             system_instruction=system_prompt,
             max_output_tokens=4000,
         ),
     )
+
     reply_text = (response.text or "").strip()
+
     return reply_text or "Sorry, I couldn't generate a response. Please try again."
 
 
